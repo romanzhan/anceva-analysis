@@ -1,0 +1,1166 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Анализ переписки и план бота · Центр Коррекции Речи Анцевой</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root{
+    --bg:#faf8f4;
+    --surface:#ffffff;
+    --ink:#1f2328;
+    --ink-2:#4a5560;
+    --muted:#7d8691;
+    --line:#e7e2d8;
+    --accent:#b6895b;
+    --accent-2:#8a6b45;
+    --ok:#4a8b5f;
+    --warn:#c27a3b;
+    --bad:#b5423c;
+    --brand:#d4a574;
+    --brand-soft:#f5ede0;
+    --tint:#f8f3ea;
+    --tint-2:#fbf7ef;
+  }
+  *{box-sizing:border-box;min-width:0}
+  html,body{margin:0;padding:0;overflow-x:hidden;max-width:100%}
+  body{
+    background:var(--bg);color:var(--ink);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,"Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    word-wrap:break-word;overflow-wrap:break-word;
+  }
+  img,svg{max-width:100%;height:auto}
+  a{color:var(--accent-2)}
+  ::selection{background:#f2dcb3}
+
+  .wrap{max-width:1120px;margin:0 auto;padding:44px 28px 120px}
+  @media (max-width:640px){.wrap{padding:18px 14px 120px}}
+
+  /* HERO */
+  header.hero{
+    background:linear-gradient(135deg,#f6ecd9 0%,#efe2c8 100%);
+    border-radius:24px;padding:56px 48px;margin-bottom:36px;
+    border:1px solid var(--line);
+  }
+  @media (max-width:860px){header.hero{padding:36px 24px;border-radius:18px;margin-bottom:24px}}
+  @media (max-width:480px){header.hero{padding:28px 20px;border-radius:14px}}
+  .kicker{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-2);font-weight:700;margin-bottom:16px}
+  header.hero h1{font-size:clamp(26px,4.8vw,46px);line-height:1.12;margin:0 0 18px;font-weight:700;letter-spacing:-.01em}
+  header.hero .lead{font-size:clamp(16px,2vw,19px);line-height:1.55;color:var(--ink-2);max-width:820px;margin:0 0 12px}
+  header.hero .meta{display:flex;gap:14px 24px;flex-wrap:wrap;margin-top:22px;font-size:13px;color:var(--ink-2)}
+  header.hero .meta span::before{content:"◇  ";color:var(--accent)}
+
+  /* TYPOGRAPHY */
+  h2{font-size:clamp(23px,3.4vw,30px);margin:56px 0 6px;font-weight:700;letter-spacing:-.01em;scroll-margin-top:80px}
+  @media (max-width:640px){h2{margin:40px 0 4px}}
+  h2 .num{display:inline-block;font-size:12px;letter-spacing:.22em;color:var(--accent-2);vertical-align:middle;
+    margin-right:12px;font-weight:700;border:1px solid var(--accent);border-radius:999px;padding:4px 10px}
+  h3{font-size:clamp(18px,2.4vw,21px);margin:26px 0 10px;font-weight:600}
+  h4{font-size:15px;margin:18px 0 6px;font-weight:600;color:var(--ink-2)}
+  p{margin:0 0 14px}
+  .sub{color:var(--ink-2);margin:-2px 0 20px;font-size:16px;max-width:820px}
+  .sub em{color:var(--accent-2);font-style:normal;font-weight:600}
+
+  /* CARDS */
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px 28px;margin:14px 0;max-width:100%}
+  .card>*{max-width:100%}
+  .card.tint{background:var(--tint)}
+  .card.soft{background:var(--brand-soft);border-color:#e5d4b2}
+  @media (max-width:640px){.card{padding:20px 18px;border-radius:12px}}
+
+  /* GRIDS */
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  @media (max-width:1000px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:860px){.g3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+  @media (max-width:760px){.split{grid-template-columns:1fr}}
+
+  /* KPI */
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .kpi .n{font-size:clamp(28px,4vw,38px);font-weight:700;letter-spacing:-.02em;line-height:1.05}
+  .kpi .l{font-size:12px;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:.14em}
+  .kpi .c{font-size:13.5px;color:var(--ink-2);margin-top:10px;line-height:1.5}
+
+  /* TABLES */
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px 0 18px;border-radius:10px;border:1px solid var(--line)}
+  .table-wrap table{margin:0;border:0}
+  table{border-collapse:collapse;width:100%;margin:10px 0 18px;font-size:14px}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}
+  th{font-weight:600;color:var(--ink-2);background:var(--tint);font-size:12.5px;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+  tr:hover td{background:var(--tint-2)}
+  @media (max-width:640px){th,td{padding:9px 10px;font-size:13.5px}th{white-space:normal;letter-spacing:.04em}}
+
+  /* TAGS + BADGES */
+  .tag{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;
+       background:var(--brand-soft);color:var(--accent-2);border:1px solid #e5d4b2;margin:2px 4px 2px 0;white-space:nowrap}
+  .tag.ok{background:#e7f2ea;color:var(--ok);border-color:#bcdcc4}
+  .tag.warn{background:#fbeedc;color:var(--warn);border-color:#eed0a9}
+  .tag.bad{background:#f8dedc;color:var(--bad);border-color:#edbab7}
+
+  /* LISTS */
+  ul.clean{padding-left:22px;margin:8px 0 14px}
+  ul.clean li{margin:5px 0}
+  ul.nodot{list-style:none;padding:0;margin:8px 0}
+  ul.nodot li{padding-left:22px;position:relative;margin:7px 0}
+  ul.nodot li::before{content:"→";position:absolute;left:0;color:var(--accent);font-weight:700}
+  ul.check li{padding-left:28px;position:relative;margin:7px 0}
+  ul.check li::before{content:"✓";position:absolute;left:4px;color:var(--ok);font-weight:700}
+  ul.cross li{padding-left:28px;position:relative;margin:7px 0;list-style:none}
+  ul.cross li::before{content:"×";position:absolute;left:6px;color:var(--bad);font-weight:700;font-size:17px}
+  ul.cross,ul.check{list-style:none;padding-left:0}
+
+  /* QUOTE / CHAT BUBBLE */
+  .quote{background:var(--brand-soft);border-left:4px solid var(--accent);padding:14px 18px;border-radius:0 12px 12px 0;margin:10px 0;font-size:14.5px;color:var(--ink-2);font-style:italic;line-height:1.55}
+  .quote .src{display:block;font-style:normal;color:var(--muted);font-size:12px;margin-top:8px;letter-spacing:.02em}
+
+  .chat{background:var(--tint-2);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:10px 0}
+  .chat .title{font-size:12.5px;color:var(--accent-2);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+  .msg{margin:6px 0;font-size:14.5px;line-height:1.5;display:flex;gap:8px}
+  .msg .who{color:var(--muted);font-size:12px;min-width:82px;flex-shrink:0;padding-top:2px}
+  .msg.p .bubble{background:#fff;border:1px solid var(--line);padding:8px 12px;border-radius:12px 12px 12px 4px;max-width:100%}
+  .msg.c .bubble{background:var(--brand-soft);border:1px solid #e5d4b2;padding:8px 12px;border-radius:12px 12px 4px 12px;max-width:100%}
+  .msg .who b{color:var(--ink-2);font-weight:600}
+  .chat .verdict{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);font-size:14px;color:var(--ink-2)}
+  .chat .verdict b{color:var(--ink)}
+
+  /* BARS */
+  .bar{display:flex;align-items:center;gap:12px;margin:8px 0;font-size:13px}
+  .bar .label{width:210px;color:var(--ink-2);flex-shrink:0}
+  .bar .track{flex:1;min-width:0;height:11px;background:var(--tint);border-radius:999px;overflow:hidden}
+  .bar .fill{height:100%;background:linear-gradient(90deg,var(--brand),var(--accent));border-radius:999px}
+  .bar .v{width:56px;text-align:right;color:var(--ink-2);font-variant-numeric:tabular-nums;flex-shrink:0}
+  @media (max-width:560px){
+    .bar{flex-wrap:wrap}
+    .bar .label{width:calc(100% - 70px)}
+    .bar .v{width:60px}
+    .bar .track{flex:1 1 100%;order:3}
+  }
+
+  /* MERMAID */
+  .mermaid{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+  .mermaid svg{max-width:100%;height:auto!important}
+
+  /* FUNNEL */
+  .funnel-row{display:grid;grid-template-columns:220px minmax(0,1fr) 66px minmax(0,1fr);gap:14px;align-items:center;padding:14px 0;border-bottom:1px dashed var(--line)}
+  .funnel-row:last-child{border-bottom:0}
+  .funnel-row .stage{font-weight:600}
+  .funnel-row .track{height:16px;background:var(--tint);border-radius:999px;overflow:hidden;min-width:0}
+  .funnel-row .fill{height:100%;background:linear-gradient(90deg,#d4a574,#8a6b45);border-radius:999px}
+  .funnel-row .pct{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-2);font-weight:600}
+  .funnel-row .note{color:var(--muted);font-size:13.5px}
+  @media (max-width:760px){
+    .funnel-row{grid-template-columns:1fr 60px;grid-template-areas:"stage pct" "track track" "note note";gap:6px 10px;padding:14px 0}
+    .funnel-row .stage{grid-area:stage}
+    .funnel-row .track{grid-area:track}
+    .funnel-row .pct{grid-area:pct}
+    .funnel-row .note{grid-area:note}
+  }
+
+  /* DETAILS */
+  details{border:1px solid var(--line);border-radius:12px;padding:0;margin:10px 0;background:#fff;overflow:hidden}
+  details summary{padding:14px 18px;cursor:pointer;font-weight:600;list-style:none;background:var(--tint)}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"＋";float:right;color:var(--accent);font-weight:700}
+  details[open] summary::after{content:"−"}
+  details .inner{padding:16px 20px}
+
+  /* CALLOUT */
+  .callout{border-left:4px solid var(--warn);background:#fdf5e9;padding:16px 20px;border-radius:0 12px 12px 0;margin:14px 0}
+  .callout.ok{border-color:var(--ok);background:#eef7f0}
+  .callout.bad{border-color:var(--bad);background:#fbeae8}
+  .callout.insight{border-color:var(--accent);background:var(--brand-soft)}
+  .callout strong{display:block;margin-bottom:4px;color:var(--ink)}
+
+  /* LAYOUT */
+  .layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:32px;align-items:start}
+  @media (max-width:960px){.layout{grid-template-columns:1fr;gap:14px}}
+
+  /* DESKTOP TOC */
+  .toc-desktop{position:sticky;top:16px;background:var(--surface);border:1px solid var(--line);
+    border-radius:14px;padding:18px 20px;font-size:13.5px;max-height:calc(100vh - 32px);overflow-y:auto}
+  .toc-desktop .tt{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-2);font-weight:700;margin-bottom:12px}
+  .toc-desktop a{display:block;padding:6px 0;color:var(--ink-2);text-decoration:none;border-bottom:1px solid transparent;line-height:1.35}
+  .toc-desktop a:hover{color:var(--accent-2)}
+  .toc-desktop a.active{color:var(--accent-2);font-weight:600}
+  @media (max-width:960px){.toc-desktop{display:none}}
+
+  /* MOBILE BURGER + DRAWER */
+  .burger{
+    position:fixed;bottom:22px;right:22px;z-index:50;
+    width:58px;height:58px;border-radius:50%;
+    background:var(--accent-2);color:#fff;border:0;
+    box-shadow:0 10px 28px rgba(138,107,69,.35), 0 2px 6px rgba(0,0,0,.08);
+    display:none;align-items:center;justify-content:center;
+    cursor:pointer;font-size:22px;line-height:1;
+    transition:transform .15s ease,background .15s;
+  }
+  .burger:active{transform:scale(.94)}
+  @media (max-width:960px){.burger{display:flex}}
+  .burger .ico{display:block;width:22px;height:16px;position:relative}
+  .burger .ico::before,.burger .ico::after,.burger .ico span{
+    content:"";position:absolute;left:0;right:0;height:2px;background:#fff;border-radius:2px;
+    transition:transform .2s ease, opacity .2s;
+  }
+  .burger .ico::before{top:0}
+  .burger .ico span{top:50%;margin-top:-1px}
+  .burger .ico::after{bottom:0}
+  body.drawer-open .burger .ico::before{transform:translateY(7px) rotate(45deg)}
+  body.drawer-open .burger .ico::after{transform:translateY(-7px) rotate(-45deg)}
+  body.drawer-open .burger .ico span{opacity:0}
+
+  .drawer-backdrop{
+    position:fixed;inset:0;background:rgba(31,35,40,.45);
+    opacity:0;pointer-events:none;transition:opacity .2s;z-index:40;
+  }
+  body.drawer-open .drawer-backdrop{opacity:1;pointer-events:auto}
+
+  .drawer{
+    position:fixed;top:0;bottom:0;right:0;width:min(320px,88vw);
+    background:var(--surface);z-index:45;
+    transform:translateX(100%);transition:transform .25s cubic-bezier(.2,.7,.2,1);
+    box-shadow:-12px 0 30px rgba(0,0,0,.12);
+    display:flex;flex-direction:column;
+  }
+  body.drawer-open .drawer{transform:translateX(0)}
+  .drawer .dh{padding:20px 22px 14px;border-bottom:1px solid var(--line)}
+  .drawer .dh .tt{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-2);font-weight:700;margin-bottom:6px}
+  .drawer .dh h4{margin:0;font-size:18px;color:var(--ink)}
+  .drawer .dbody{padding:8px 10px 22px;overflow-y:auto;flex:1}
+  .drawer a{
+    display:block;padding:12px 14px;margin:2px 0;font-size:15px;
+    color:var(--ink-2);text-decoration:none;border-radius:10px;line-height:1.3;
+  }
+  .drawer a:active,.drawer a.active{background:var(--tint);color:var(--accent-2);font-weight:600}
+  .drawer a .n{display:inline-block;width:24px;color:var(--accent);font-weight:700;font-size:12px}
+
+  /* MISC */
+  code{background:var(--tint);padding:2px 6px;border-radius:5px;font-size:13px;font-family:"SFMono-Regular",Menlo,Consolas,monospace;color:var(--accent-2)}
+  hr{border:0;border-top:1px solid var(--line);margin:36px 0}
+  footer{margin-top:80px;padding:28px 0;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+
+  .big-num{font-size:clamp(44px,6vw,64px);font-weight:700;letter-spacing:-.03em;line-height:1;color:var(--accent-2)}
+
+  /* STEP LIST */
+  .steps{counter-reset:s;list-style:none;padding:0;margin:16px 0}
+  .steps li{counter-increment:s;position:relative;padding:16px 18px 16px 64px;background:var(--surface);border:1px solid var(--line);border-radius:12px;margin:10px 0}
+  .steps li::before{
+    content:counter(s);position:absolute;left:16px;top:16px;
+    width:32px;height:32px;border-radius:50%;
+    background:var(--brand-soft);color:var(--accent-2);
+    font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px;
+    border:1px solid #e5d4b2;
+  }
+  .steps li b{display:block;margin-bottom:4px;color:var(--ink);font-size:15.5px}
+  .steps li .d{color:var(--ink-2);font-size:14.5px;line-height:1.55}
+
+  /* PRO/CONTRA */
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:760px){.twocol{grid-template-columns:1fr}}
+  .twocol .col{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+  .twocol .col h4{margin-top:0}
+  .twocol .col.can h4{color:var(--ok)}
+  .twocol .col.cant h4{color:var(--bad)}
+
+  /* HIGHLIGHT BLOCK */
+  .hl{background:linear-gradient(135deg,#f6ecd9 0%,#eadcc0 100%);border:1px solid #e5d4b2;border-radius:18px;padding:28px 32px;margin:24px 0}
+  @media (max-width:640px){.hl{padding:22px 20px;border-radius:14px}}
+  .hl h3{margin-top:0}
+</style>
+</head>
+<body>
+
+<button class="burger" id="burger" aria-label="Открыть оглавление"><span class="ico"><span></span></span></button>
+<div class="drawer-backdrop" id="backdrop"></div>
+
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="dh">
+    <div class="tt">Навигация</div>
+    <h4>Содержание</h4>
+  </div>
+  <div class="dbody">
+    <a href="#summary"><span class="n">01</span>Главное за 2 минуты</a>
+    <a href="#who"><span class="n">02</span>Кто твой клиент</a>
+    <a href="#funnel"><span class="n">03</span>Где тают люди</a>
+    <a href="#cases"><span class="n">04</span>Живые примеры</a>
+    <a href="#returning"><span class="n">05</span>Возвращенцы</a>
+    <a href="#product"><span class="n">06</span>Что ты продаёшь</a>
+    <a href="#dialog"><span class="n">07</span>Анатомия диалога</a>
+    <a href="#tree"><span class="n">08</span>Дерево сценариев</a>
+    <a href="#objections"><span class="n">09</span>Возражения</a>
+    <a href="#tone"><span class="n">10</span>Голос центра</a>
+    <a href="#ops"><span class="n">11</span>Ежедневная рутина</a>
+    <a href="#gaps"><span class="n">12</span>Что сейчас болит</a>
+    <a href="#bot-how"><span class="n">13</span>Как говорит бот</a>
+    <a href="#bot-what"><span class="n">14</span>Что умеет бот</a>
+    <a href="#bot-not"><span class="n">15</span>Границы бота</a>
+    <a href="#handoff"><span class="n">16</span>Передача человеку</a>
+    <a href="#levers"><span class="n">17</span>Рычаги роста</a>
+    <a href="#mktg"><span class="n">18</span>Маркетинг</a>
+    <a href="#kpi"><span class="n">19</span>Что мерить</a>
+  </div>
+</aside>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="kicker">Глубокий разбор · Караганда · апрель 2026</div>
+  <h1>98 чатов, 32 261 строка, 2 года переписки — и что это значит для твоего бизнеса</h1>
+  <p class="lead">Я прочитал всё: от первого «Здравствуйте» случайной мамы до фраз «Мария Сергеевна, вы спасение». Ниже — честная картина того, что ты делаешь правильно, где теряешь деньги на ровном месте и что из этого закроет бот, а что — по-прежнему только живой человек.</p>
+  <div class="meta">
+    <span>98 чатов</span>
+    <span>32 261 строк переписки</span>
+    <span>195 сообщений на чат в среднем</span>
+    <span>~6 месяцев жизни одного клиента в чате</span>
+    <span>13 листов чек-листа менеджера</span>
+  </div>
+</header>
+
+<div class="layout">
+
+<aside class="toc-desktop" aria-label="Содержание">
+  <div class="tt">Содержание</div>
+  <a href="#summary">01. Главное за 2 минуты</a>
+  <a href="#who">02. Кто твой клиент</a>
+  <a href="#funnel">03. Где тают люди</a>
+  <a href="#cases">04. Живые примеры</a>
+  <a href="#returning">05. Возвращенцы</a>
+  <a href="#product">06. Что ты продаёшь</a>
+  <a href="#dialog">07. Анатомия диалога</a>
+  <a href="#tree">08. Дерево сценариев</a>
+  <a href="#objections">09. Возражения</a>
+  <a href="#tone">10. Голос центра</a>
+  <a href="#ops">11. Ежедневная рутина</a>
+  <a href="#gaps">12. Что сейчас болит</a>
+  <a href="#bot-how">13. Как говорит бот</a>
+  <a href="#bot-what">14. Что умеет бот</a>
+  <a href="#bot-not">15. Границы бота</a>
+  <a href="#handoff">16. Передача человеку</a>
+  <a href="#levers">17. Рычаги роста</a>
+  <a href="#mktg">18. Маркетинг</a>
+  <a href="#kpi">19. Что мерить</a>
+</aside>
+
+<main>
+
+<!-- 01 -->
+<h2 id="summary"><span class="num">01</span>Главное за 2 минуты</h2>
+<p class="sub">Если читать совсем некогда — вот семь вещей, ради которых стоит прочитать весь остальной документ.</p>
+
+<div class="grid g4">
+  <div class="kpi"><div class="n">98</div><div class="l">чатов в корпусе</div><div class="c">92% начинает родитель, 8% — центр возобновляет</div></div>
+  <div class="kpi"><div class="n">1%</div><div class="l">анкет заполнено</div><div class="c">при том что анкета — обязательный этап в чек-листе. Это главная дыра.</div></div>
+  <div class="kpi"><div class="n">61%</div><div class="l">чатов висят без ответа</div><div class="c">последнее сообщение — от центра, клиент молчит. Деньги, которые легко вернуть.</div></div>
+  <div class="kpi"><div class="n">67%</div><div class="l">клиентов переносят</div><div class="c">переносы съедают время админа и часто — педагога, подготовившегося к ребёнку</div></div>
+</div>
+
+<div class="card" style="margin-top:22px">
+<ul class="nodot">
+  <li><b>Скрипт уже написан — им пользуются не до конца.</b> В чек-листе есть чёткое дерево диалога: возраст → запрос → вопросы → диагностика → оплата. В чатах оно работает, когда его придерживаются, и ломается, когда нет. Бот закроет именно дисциплину.</li>
+  <li><b>Цена сразу — не называется, и это правильно.</b> Админ сначала задаёт 5–8 вопросов, и только потом выдаёт информацию о диагностике. Там где это правило нарушали — получали «подумаем» и молчание.</li>
+  <li><b>Анкета и видео — мёртвый этап.</b> Из 98 чатов упоминание заполненной анкеты встречается 1 раз. Специалист идёт на диагностику почти вслепую. Это чинится Telegram-формой внутри бота.</li>
+  <li><b>Родители молчат не от обиды, а от жизни.</b> Работа, второй ребёнок, болезнь, уезд — и чат просто забывается. Автоматический follow-up возвращает часть молчащих без единого усилия админа.</li>
+  <li><b>Сарафан — главный двигатель.</b> «Воспитатели из Рукавички посоветовали», «знакомая логопед сказала», «невропатолог направил». Это не случайность, это система, которую можно оформить программой.</li>
+  <li><b>Тёплый тон центра — не стиль, а продукт.</b> Поздравления с ДР ребёнка, «🌿», «Томирисочка», «всё обязательно будет хорошо» — это то, что заставляет клиентов возвращаться через полгода. Это надо сохранить в боте дословно.</li>
+  <li><b>Бот не заменит тебя и Марию Сергеевну.</b> Он закроет первый контакт, квалификацию, подведение к диагностике и напоминания. Всё, что после ДИ — конверсия на педагоге и на центре. Это честная и правильная граница.</li>
+</ul>
+</div>
+
+<!-- 02 -->
+<h2 id="who"><span class="num">02</span>Кто твой клиент</h2>
+<p class="sub">Не «ЦА 25–40», а живой человек с тревогой и телефоном в руке.</p>
+
+<div class="split">
+<div class="card">
+<h3 style="margin-top:0">Портрет</h3>
+<p>Мама, 28–40 лет, Караганда. Работает в графике или сидит дома с младшим. На руках ребёнок, у которого что-то «не так» — не говорит, не выговаривает, заикается, или просто «соседский мальчик в его возрасте уже читает, а наш…». Пришла по совету — воспитатель в саду, невропатолог, подруга, которая сама водила ребёнка к Маше.</p>
+<p>Она не знает разницы между логопедом и дефектологом. Она не хочет разбираться — хочет, чтобы <em>ей сказали что делать</em>. Она боится, что с ребёнком что-то серьёзное, но ещё больше боится, что её осудят за то, что «пропустила момент».</p>
+</div>
+<div class="card">
+<h3 style="margin-top:0">Что у неё в голове</h3>
+<ul class="clean">
+  <li>«Лишь бы с ребёнком всё было нормально»</li>
+  <li>«Хочу, чтобы меня поняли с полуслова»</li>
+  <li>«Не хочу слышать диагнозы от первого человека в переписке»</li>
+  <li>«27 000 в месяц — нормально; 75 000 — надо обсудить с мужем»</li>
+  <li>«Если расскажут про методику и посмотрят ребёнка — я им поверю»</li>
+  <li>«Если мне скажут цену в первом сообщении — сравню и уйду»</li>
+</ul>
+</div>
+</div>
+
+<div class="card tint">
+<h3 style="margin-top:0">Сегменты по запросу — и что они хотят услышать</h3>
+<div class="table-wrap">
+<table>
+<tr><th>Сегмент</th><th>Возраст</th><th>Что пишет первым</th><th>Что ей нужно от первого ответа</th></tr>
+<tr><td><span class="tag">Запуск речи</span></td><td>1–3</td><td>«Сыну 1,8, не разговаривает, 2–3 звукоподражания»</td><td>«Мы таких видели, не паникуйте, это решается, приходите — покажем»</td></tr>
+<tr><td><span class="tag">Звуки</span></td><td>4–7</td><td>«Не выговаривает Р и шипящие»</td><td>«Это стандартная задача, в 5–7 лет — самое время»</td></tr>
+<tr><td><span class="tag">К школе</span></td><td>5–7</td><td>«Интересует подготовка к школе»</td><td>«У нас есть группа и диагностика готовности — посмотрим, где сейчас ребёнок»</td></tr>
+<tr><td><span class="tag">Диагноз</span></td><td>2–13</td><td>«Ставят ЗПРР/ОНР/аутизм»</td><td>Не пугаться диагноза, не ставить свой, задать вопросы, направить к врачу при необходимости, взять на ДИ</td></tr>
+<tr><td><span class="tag">Подросток</span></td><td>14–16</td><td>«Хочу заниматься над речью»</td><td>Аккуратно уточнить, что родители в курсе — без родителей в оплате не начинаем</td></tr>
+<tr><td><span class="tag">Возврат</span></td><td>любой</td><td>«Мария Сергеевна, здравствуйте, это мама…»</td><td>Узнать сразу, не заставлять пересказывать — это возвращенец, обрадоваться и найти окно</td></tr>
+<tr><td><span class="tag">Цена сразу</span></td><td>любой</td><td>«Сколько стоят занятия?»</td><td>Не называть. Мягко вернуть к уточнениям, иначе уйдёт сравнивать</td></tr>
+</table>
+</div>
+</div>
+
+<!-- 03 FUNNEL -->
+<h2 id="funnel"><span class="num">03</span>Где тают люди</h2>
+<p class="sub">Воронка по текущей переписке. Важны не столько проценты доходимости (корпус — в основном действующие клиенты), сколько <em>где видны швы</em>.</p>
+
+<div class="card">
+<div class="funnel-row">
+  <div class="stage">Первое сообщение</div>
+  <div class="track"><div class="fill" style="width:100%"></div></div>
+  <div class="pct">100%</div>
+  <div class="note">92% пишет родитель, 8% — центр возобновляет</div>
+</div>
+<div class="funnel-row">
+  <div class="stage">Квалификация</div>
+  <div class="track"><div class="fill" style="width:98%"></div></div>
+  <div class="pct">98%</div>
+  <div class="note">возраст, запрос, садик — обычно собирается быстро</div>
+</div>
+<div class="funnel-row">
+  <div class="stage">Отправка адреса</div>
+  <div class="track"><div class="fill" style="width:79%"></div></div>
+  <div class="pct">79%</div>
+  <div class="note">21% — либо ушли раньше, либо адрес дан голосом</div>
+</div>
+<div class="funnel-row">
+  <div class="stage">Обсуждение оплаты</div>
+  <div class="track"><div class="fill" style="width:95%"></div></div>
+  <div class="pct">95%</div>
+  <div class="note">Kaspi + чек — рабочая связка</div>
+</div>
+<div class="funnel-row">
+  <div class="stage">Анкета ребёнка</div>
+  <div class="track"><div class="fill" style="width:1%"></div></div>
+  <div class="pct">1%</div>
+  <div class="note" style="color:var(--bad)">критический провал этапа</div>
+</div>
+<div class="funnel-row">
+  <div class="stage">Видео ребёнка</div>
+  <div class="track"><div class="fill" style="width:43%"></div></div>
+  <div class="pct">43%</div>
+  <div class="note">запрошено; прислано — меньше</div>
+</div>
+<div class="funnel-row">
+  <div class="stage">Ответ клиента на последнее сообщение</div>
+  <div class="track"><div class="fill" style="width:39%"></div></div>
+  <div class="pct">39%</div>
+  <div class="note" style="color:var(--warn)">61% чатов висят «последним написал центр»</div>
+</div>
+</div>
+
+<div class="callout insight"><strong>Что с этим делать</strong>
+Анкету и видео — переводим внутрь бота (Telegram-форма + приём файлов). Молчание — автоматический «мягкий толчок» через 24 и 48 часов. Для возвращенцев — распознавание «это уже наш» по номеру телефона и tg_id.</div>
+
+<!-- 04 CASES -->
+<h2 id="cases"><span class="num">04</span>Живые примеры из твоих чатов</h2>
+<p class="sub">Пять реальных сценариев: где всё сработало, где — нет, и что из этого должен понять бот.</p>
+
+<!-- CASE 1 -->
+<div class="card">
+<h3 style="margin-top:0">Кейс 1 · Идеальный вход — мама Нелли, дочка 4 года, постановка ш/ч</h3>
+<div class="chat">
+  <div class="title">Хронология: 7 апреля, одно утро</div>
+  <div class="msg p"><div class="who">Нелли<br><b>09:10</b></div><div class="bubble">Здравствуйте. Я хотела бы записать ребенка на консультацию к логопеду</div></div>
+  <div class="msg c"><div class="who">Центр<br><b>09:11</b></div><div class="bubble">Здравствуйте, Нелли! Расскажите, пожалуйста, какой возраст у ребенка?</div></div>
+  <div class="msg p"><div class="who">Нелли<br><b>09:11</b></div><div class="bubble">Дочке 4 года. Сложности в произношении звуков «ш» «ч»</div></div>
+  <div class="msg c"><div class="who">Центр<br><b>09:24</b></div><div class="bubble">В речи есть фразы/предложения? Может рассказать событие/сказку?</div></div>
+  <div class="msg p"><div class="who">Нелли<br><b>09:24</b></div><div class="bubble">Да, полными сложными предложениями разговаривает</div></div>
+  <div class="msg c"><div class="who">Центр<br><b>09:27</b></div><div class="bubble">Нелли, перед началом занятий необходимо пройти диагностику, после которой Вы получите консультацию и мы определим график 🤗</div></div>
+  <div class="msg c"><div class="who">Центр<br><b>09:36</b></div><div class="bubble">Есть ближайшее свободное время завтра в 10:30. Или на следующей неделе понедельник 10:30.</div></div>
+  <div class="msg p"><div class="who">Нелли<br><b>09:47</b></div><div class="bubble">Можно на понедельник</div></div>
+  <div class="msg c"><div class="who">Центр<br><b>09:48</b></div><div class="bubble">Хорошо, запишем. Напишите имя, фамилию и полную дату рождения ребёнка</div></div>
+  <div class="bubble" style="background:transparent;border:0;padding:0;font-size:13px;color:var(--muted);margin:8px 0 0">… далее Kaspi-счёт → чек → адрес. Всё за 40 минут.</div>
+  <div class="verdict"><b>Почему сработало:</b> мама сразу назвала запрос и возраст, центр задал ровно те вопросы, которые нужны, не назвал цену до квалификации, быстро дал два варианта слота, оплату запросили сразу — классический проход по скрипту. <b>Бот такой диалог ведёт сам с нуля.</b></div>
+</div>
+</div>
+
+<!-- CASE 2 -->
+<div class="card">
+<h3 style="margin-top:0">Кейс 2 · Сложная, но красивая посадка — Асем, сын 6 лет, Р и шипящие</h3>
+<div class="chat">
+  <div class="title">Ключевой момент</div>
+  <div class="msg p"><div class="who">Асем<br><b>08:39</b></div><div class="bubble">Доброе утро. Меня зовут Асем. Моему сыну 6 лет, не выговаривает букву Р и шипящие. Ходит в развивашку Рукавичка и воспитатели посоветовали как опытного логопеда Марию Анцеву. Есть ли приём в выходные?</div></div>
+  <div class="msg c"><div class="who">Центр<br><b>09:05</b></div><div class="bubble">Здравствуйте, Асем! В выходные на постоянной основе принимать не сможем. Есть возможность подобрать свободное окошко на вечернее время в будни.</div></div>
+  <div class="msg c"><div class="who">Центр<br><b>09:07</b></div><div class="bubble">В какое время Вы забираете сына с Рукавички? Он продолжит посещать в летний период?</div></div>
+  <div class="msg p"><div class="who">Асем<br><b>10:01</b></div><div class="bubble">Хорошо, давайте. Сколько стоит занятие?</div></div>
+  <div class="msg c"><div class="who">Центр<br><b>10:03</b></div><div class="bubble">Первая встреча будет диагностическая + консультация у Марии Сергеевны. [далее — что входит в ДИ, цена 7 000 тг, потом цена занятий 4 500]</div></div>
+  <div class="verdict"><b>Что стоит заметить:</b> цена спрошена в лоб, но центр не бросил сумму сразу — сначала объяснил что такое ДИ, потом выдал прайс. Добавил «наш логопед — Мария Сергеевна» (имя, которое родителю уже рекомендовали). Это <em>правильное продуктовое позиционирование</em> в первом сообщении. <br><br><b>Что случилось через месяц:</b> у семьи внеплановые расходы, ушли на август–сентябрь. Но ушли <em>по-человечески</em>: Асем честно написала «распределён бюджет с мужем, частная школа полного дня, попробуем позже». Центр ответил «не переживайте 🌿 это жизнь». <b>Такие клиенты возвращаются.</b></div>
+</div>
+</div>
+
+<!-- CASE 3 -->
+<div class="card">
+<h3 style="margin-top:0">Кейс 3 · Где утекает время — Жанмира, дочь Томирис 5 лет</h3>
+<div class="chat">
+  <div class="title">Типичный день</div>
+  <div class="msg p"><div class="who">Жанмира<br><b>10:38</b></div><div class="bubble">Здравствуйте, сегодня можно пораньше?</div></div>
+  <div class="msg p"><div class="who">Жанмира<br><b>10:38</b></div><div class="bubble">Или занято?</div></div>
+  <div class="msg p"><div class="who">Жанмира<br><b>10:29</b></div><div class="bubble">Томи рано встала</div></div>
+  <div class="msg c"><div class="who">Центр<br><b>10:34</b></div><div class="bubble">Здравствуйте, Жанмира! Есть возможность взять Томирис в 11:30. Или к 11 успеете?</div></div>
+  <div class="msg p"><div class="who">Жанмира<br><b>10:37</b></div><div class="bubble">11.10 где-то</div></div>
+  <div class="msg c"><div class="who">Центр<br><b>10:38</b></div><div class="bubble">Тогда ждём Вас 🌷</div></div>
+  <div class="verdict"><b>Что сработало:</b> теплота, гибкость, персональный подход. Это сильная сторона. <br><b>Что не сработало:</b> такой чат в разных формах повторяется десятки раз в месяц — «опаздываем», «можно пораньше», «нас не будет», «Каспи на 10 тыс срочно», «забыла что вторник», «в пробке задерживаемся». Человеку неинтересно это обрабатывать вручную. <b>Это работа для бота — но не автоматом.</b> Бот даёт кнопки «перенести», «опоздаю на N минут», «оплата → Kaspi» — и родитель сам нажимает. Админ видит ленту ответов в одном окне и нажимает «ок» или пишет одну строку при нестандарте.</div>
+</div>
+</div>
+
+<!-- CASE 4 -->
+<div class="card">
+<h3 style="margin-top:0">Кейс 4 · Казахоязычный запрос — Гульзира, сын 3 года</h3>
+<div class="chat">
+  <div class="title">Вечер, 40 минут переписки</div>
+  <div class="msg p"><div class="who">Гульзира<br><b>15:16</b></div><div class="bubble">Здравствуйте</div></div>
+  <div class="msg p"><div class="who">Гульзира<br><b>15:16</b></div><div class="bubble">Сколько стоит занятия с логопедом. На казахском языке</div></div>
+  <div class="msg c"><div class="who">Центр<br><b>16:20</b></div><div class="bubble">Да, казахоязычные специалисты у нас есть 🤗. Подскажите возраст ребёнка?</div></div>
+  <div class="msg p"><div class="who">Гульзира<br><b>16:20</b></div><div class="bubble">3,3</div></div>
+  <div class="msg p"><div class="who">Гульзира<br><b>16:21</b></div><div class="bubble">Мы ходим к логопеду, просто далеко ехать</div></div>
+  <div class="msg c"><div class="who">Центр<br><b>16:22</b></div><div class="bubble">При графике 2 раза в неделю стоимость 44 000. При 3 раза — 64 000</div></div>
+  <div class="verdict"><b>Что неидеально:</b> цена названа до того, как разобрались с запросом и возрастом окончательно. Дальше разговор ещё полчаса вертелся вокруг «а какое время», «а субботу работаете», «сколько длится». Родитель пришёл уже с другого центра, оттолкнулась ценой и поехала искать дальше. <br><b>Что бот сделает иначе:</b> не выдаст прайс в 4-м сообщении. Уточнит — ребёнок говорит фразами? уже занимается? что именно не получается? — и только тогда скажет про ДИ. И только после ДИ — про месячный тариф.</div>
+</div>
+</div>
+
+<!-- CASE 5 -->
+<div class="card">
+<h3 style="margin-top:0">Кейс 5 · Возвращенец — Татьяна, дочь Радмила</h3>
+<div class="chat">
+  <div class="title">Январь, после паузы</div>
+  <div class="msg p"><div class="who">Татьяна<br></div><div class="bubble">Мария Сергеевна, добрый вечер. Вас беспокоит мама Радмилы, девочка моя созрела для занятия опять 😍 только мы хотим на индивидуальные к Вам, есть такая возможность? Радмила просится…</div></div>
+  <div class="msg c"><div class="who">Центр</div><div class="bubble">[сразу обсуждаем окно, без повторной диагностики]</div></div>
+  <div class="verdict"><b>Это не первый чат.</b> Это второе или третье возвращение. Центр её помнит, она помнит центр. Такие клиенты не сравнивают цены и не требуют объяснений — они идут к конкретному человеку. <b>Что должен сделать бот:</b> сразу распознать «это уже наш» по номеру и передать админу с картой ребёнка на экране. Ни в коем случае не гонять по дереву диалога как новенькую — это обидно.</div>
+</div>
+</div>
+
+<!-- 05 RETURNING -->
+<h2 id="returning"><span class="num">05</span>Портрет возвращающегося клиента</h2>
+<p class="sub">Отдельный раздел, потому что <em>это самый маржинальный сегмент</em>. Возвращенцы не требуют квалификации, не сравнивают, не спрашивают цену.</p>
+
+<div class="split">
+<div class="card">
+<h3 style="margin-top:0">Почему уходят</h3>
+<ul class="clean">
+  <li><b>Деньги.</b> «Распределён бюджет», «непредвиденные расходы», «частная школа полного дня». Самая частая причина — финансовая, а не продуктовая.</li>
+  <li><b>Жизнь.</b> Переезд, беременность вторым, ремонт, работа «в сезон». «Ноябрь–декабрь у нас горячий период на работе, вернёмся с января».</li>
+  <li><b>Здоровье.</b> Долгая реабилитация, больничный, курс препаратов, когда занятия ставятся на паузу.</li>
+  <li><b>Усталость.</b> «Режим сбился», «Томирис капризничает», «не могу договориться». Родитель эмоционально выгорел, а не ребёнок устал от занятий.</li>
+  <li><b>Школа.</b> У 5–7-летних — сентябрь меняет всё. Расписание школы, продлёнка, кружки.</li>
+</ul>
+</div>
+<div class="card">
+<h3 style="margin-top:0">Почему возвращаются</h3>
+<ul class="clean">
+  <li><b>Доверие к Марии Сергеевне.</b> «Хотели прям к Вам». Центр — это человек. Это ценное и это надо беречь.</li>
+  <li><b>Видели результат.</b> Если ребёнок заговорил или звук «встал», родитель возвращается с младшим или через полгода с тем же.</li>
+  <li><b>Рекомендация.</b> Подружке помогло — и эта возвращается. Сарафан работает внутри сегмента «мамы Караганды 30–40».</li>
+  <li><b>Уход был красивым.</b> Когда центр не давил, а сказал «это жизнь, возвращайтесь как будет возможность» — возвращаются в 3–5 раз чаще.</li>
+  <li><b>Новогодний утренник.</b> Реально возвращающий триггер. Родители приводят ребёнка на ёлку — и остаются на курс.</li>
+</ul>
+</div>
+</div>
+
+<div class="callout ok"><strong>Что делает бот для возвращенца</strong>
+1. Распознаёт по номеру телефона / tg_id — видит: «клиент А., был у нас в 2024, ребёнок 5 лет, направление — дефектолог, специалист — Маргарита Наильевна, последнее занятие 4 месяца назад». 2. Сразу ставит пометку «<em>возвращенец</em>» и передаёт админу. Без ветки квалификации и без описаний ДИ. 3. Админ в одну строку: «Татьяна, рада вас видеть 🌿 Когда удобно?» — и сразу в календарь.</div>
+
+<div class="card soft">
+<h3 style="margin-top:0">Тихий канал, который ты уже построила</h3>
+<p>В корпусе постоянно встречаются фразы «Мария Сергеевна, Вы спасение», «спасибо за праздник — Марк два дня рассказывал», «Вы замечательная». Это не вежливость — это эмоциональная привязанность, которую ты собственноручно построила через тон, поздравления, персональный подход. <b>Для бота это не повод отказаться от автоматизации</b>, а повод крепко вшить этот тон в каждую его реплику и не превратить в «робот из колл-центра».</p>
+</div>
+
+<!-- 06 PRODUCT -->
+<h2 id="product"><span class="num">06</span>Что ты на самом деле продаёшь</h2>
+<p class="sub">Не занятия. Не часы с логопедом. Не Маму+малыша.</p>
+
+<div class="hl">
+<h3>Ты продаёшь родителю <em>спокойствие</em>.</h3>
+<p>Мама приходит в тревоге. «Сыну 1,8, не разговаривает. Начиталась всякого». К специалисту она идёт не за методикой — а за фразой «с ребёнком всё нормально, это решается, приходите покажем». Твой главный конкурент — не другой логопедический центр, а <em>гугл в 2 часа ночи</em>, где мама прочитала про ЗПРР и аутизм.</p>
+<p>Диагностика — это не «мы посмотрим звуки». Это «мы вас услышим, потом посмотрим ребёнка, потом честно скажем». Именно так она и описана в ваших шаблонах — и именно это стоит 9–15 тысяч, а не «осмотр 60 минут».</p>
+</div>
+
+<div class="grid g3">
+<div class="card"><h4 style="margin-top:0">Что на витрине</h4><p>«Индивидуальные занятия с логопедом-дефектологом по постановке и автоматизации звуков»</p></div>
+<div class="card"><h4 style="margin-top:0">Что на самом деле</h4><p>«Мы вас возьмём за руку. Скажем что делать дома. Покажем что получается. Поздравим когда выйдет Р»</p></div>
+<div class="card"><h4 style="margin-top:0">Что в чеке</h4><p>57 000 тг / мес. Но в голове клиента это не «услуга», а «спокойный сон, пока ребёнок ходит к Марии Сергеевне»</p></div>
+</div>
+
+<p>Важно, чтобы бот <em>не сломал этот продукт</em> сухостью. Если первое сообщение от центра звучит как «Здравствуйте, назовите возраст» — ты уже проиграла конкуренту с Instagram-таргетом, где у девочки в рилсе ребёнок смеётся. Каждая реплика бота должна звучать так, как если бы её написал человек, который <em>понимает и готов помочь</em>.</p>
+
+<!-- 07 DIALOG -->
+<h2 id="dialog"><span class="num">07</span>Анатомия одного диалога</h2>
+<p class="sub">Скелет, который уже есть в твоём чек-листе, и по которому работают лучшие чаты.</p>
+
+<ol class="steps">
+<li><b>Приветствие с именем центра.</b> <span class="d">«Здравствуйте! Вас приветствует Центр Коррекции Речи Марии Анцевой!» — бренд-нейм в первом сообщении работает.</span></li>
+<li><b>Имя родителя.</b> <span class="d">«Подскажите, как к Вам обращаться? 🤗». Это не вежливость, это триггер — мама включается, когда к ней обращаются по имени.</span></li>
+<li><b>Правило цены.</b> <span class="d">Если родитель просит прайс в лоб — мягко объясняем: «родители обращаются по разным запросам, мы уточним пару вопросов, чтобы сориентировать корректно». Это не «отказ отвечать», это «мы хотим не ошибиться с вами».</span></li>
+<li><b>Точный возраст.</b> <span class="d">Развилка дерева — идёт отсюда. «4,5 года» и «4 года 11 месяцев» — это две разные ветки.</span></li>
+<li><b>Ветка по возрасту.</b> <span class="d">Свой набор вопросов: для 1–2 — «звукоподражания есть?», для 4–6 — «пересказывает?», для 5–7 — «идёт в школу?», для 14–16 — отдельный контур с родителем.</span></li>
+<li><b>Контекст.</b> <span class="d">Садик, кружки, дневной сон, невропатолог, заключения врачей. Это нужно не ради формальности — на ДИ педагог вытаскивает это из анамнеза.</span></li>
+<li><b>Тревоги.</b> <span class="d">«Что Вас особенно волнует?» Даёт родителю выдохнуть: «меня услышали».</span></li>
+<li><b>Переход к ДИ.</b> <span class="d">«Теперь наша задача в живую познакомиться с ребёнком…». Это фирменная фраза Марии. Её надо сохранить дословно.</span></li>
+<li><b>Пакет диагностики.</b> <span class="d">Длинный, структурированный текст о том, что входит. Разное содержание по направлениям. 60–90 минут, 7–15 тысяч.</span></li>
+<li><b>Подбор времени.</b> <span class="d">Два-три слота на выбор. Первая половина дня — для диагностик это важно (ребёнок свежий).</span></li>
+<li><b>ФИО + ДР ребёнка + имя родителя.</b> <span class="d">Это и бронь, и карточка клиента в базу.</span></li>
+<li><b>Kaspi + чек.</b> <span class="d">Оплата = бронь. Без чека время не закрепляем.</span></li>
+<li><b>Подтверждение + адрес + 2ГИС.</b> <span class="d">Адрес даётся только после оплаты — это правило.</span></li>
+<li><b>Правила переноса.</b> <span class="d">Один перенос — без проблем. Второй — бронь сгорает. Мягко, но твёрдо.</span></li>
+<li><b>Анкета + видео.</b> <span class="d">До ДИ за 2 суток — чтобы педагог подготовился. Сейчас этот этап почти не работает — чинит бот.</span></li>
+<li><b>Напоминание за сутки.</b> <span class="d">«Подтвердите запись», «ждём Вас в 10:30 🌿».</span></li>
+<li><b>После ДИ.</b> <span class="d">График, кабинет, имя специалиста, правила оплаты, фото-согласие.</span></li>
+</ol>
+
+<!-- 08 TREE -->
+<h2 id="tree"><span class="num">08</span>Дерево сценариев</h2>
+<p class="sub">Что именно ветвится. Это и есть карта, по которой поедет бот.</p>
+
+<div class="mermaid">
+flowchart TD
+  A([Первое сообщение]) --> B{Тип}
+  B -- «Здравствуйте, запишите на консультацию» --> C[Имя + возраст]
+  B -- «Сколько стоит?» --> PR[Правило: сначала уточним]
+  PR --> C
+  B -- «Мария Сергеевна, это мама…» --> RC[Возвращенец → админ]
+  B -- подросток пишет сам --> TG[Отдельный контур 14-16]
+  C --> D{Возраст}
+  D -- 0-2 --> E1[Запуск речи или М+М]
+  D -- 2-5 --> E2[Дефектолог]
+  D -- 4-6 --> E3[Грамматика и звуки]
+  D -- 5-7 --> E4{В школу в сентябре?}
+  D -- 7-13 --> E5[Логопед или нейропсихолог]
+  D -- 14-16 --> TG
+  E4 -- да --> ESH[ПШ + диагностика готовности]
+  E4 -- через год --> E4a[Подгруппа общеразвивающая]
+  E1 --> V1[Звукоподражания? видео игры]
+  E2 --> V2[Пересказывает? видео диалога]
+  E3 --> Q3[Какие звуки беспокоят?]
+  E5 --> Q5[Трудности в школе?]
+  V1 & V2 & Q3 & Q5 & ESH --> MED[Невропатолог, заключения]
+  MED --> CONC[Тревоги родителя]
+  CONC --> PKG[Пакет о ДИ]
+  PKG --> SLOT[2-3 окна на выбор]
+  SLOT --> FIO[ФИО + ДР + имя родителя]
+  FIO --> PAY[Kaspi счёт]
+  PAY --> CONF[Подтверждение + адрес]
+  CONF --> RULES[Правила переноса]
+  RULES --> FORM[Анкета + видео]
+  FORM --> RM[Напоминание за 1 сутки]
+  RM --> DIAG[(Диагностика)]
+  DIAG --> POST[График, правила, согласие]
+  POST --> CLIENT[(Активный клиент)]
+  classDef q fill:#fff,stroke:#b6895b,color:#1f2328
+  classDef o fill:#f5ede0,stroke:#b6895b,color:#4a5560
+  classDef g fill:#e7f2ea,stroke:#4a8b5f,color:#1f2328
+  classDef b fill:#fbeedc,stroke:#c27a3b,color:#1f2328
+  class D,B,E4 q
+  class DIAG,CLIENT g
+  class TG,RC b
+</div>
+
+<!-- 09 OBJECTIONS -->
+<h2 id="objections"><span class="num">09</span>Возражения и как их закрывать</h2>
+
+<div class="card">
+<div class="table-wrap">
+<table>
+<tr><th>Что слышишь</th><th>Как часто</th><th>Что на самом деле</th><th>Что отвечать</th></tr>
+<tr><td>«Время не подходит»</td><td><span class="tag warn">35%</span></td><td>Реальное расписание семьи</td><td>Два-три альтернативных окна. Предложить Гаухар Ермековну (вечер) или Маргариту (утро). Нет — в лист ожидания.</td></tr>
+<tr><td>«Подумаем»</td><td><span class="tag warn">13%</span></td><td>Обсуждает с мужем / сравнивает / копит</td><td>Не давить. Мягко: «конечно, ждём от вас сообщения». Через 48 часов — ненавязчивый follow-up от бота.</td></tr>
+<tr><td>«Дорого»</td><td><span class="tag">4%</span></td><td>Редко говорят в лицо. Обычно тихо уходят.</td><td>Объяснить логику: регулярность = эффект. Предложить 2×/нед как лёгкий вход.</td></tr>
+<tr><td>«Далеко»</td><td><span class="tag">4%</span></td><td>Ищут рядом с домом</td><td>«Центр города, пересечение Ермекова и Ерубаева». Часто работает.</td></tr>
+<tr><td>«После зарплаты»</td><td><span class="tag">~10%</span></td><td>Нужно дождаться 5 числа</td><td>«Хорошо, ждём. Окно сохраним до {дата}». Поставить тайминг.</td></tr>
+<tr><td>«Перенос»</td><td><span class="tag bad">67%</span></td><td>Болезнь, пробки, работа</td><td>Принять. Напомнить про «до 19:00». Поиск окна в текущем месяце.</td></tr>
+<tr><td>Тишина</td><td><span class="tag bad">61%</span></td><td>Забыл, отвлёкся, жизнь</td><td>Follow-up через 24, 48 часов и 7 дней. Большая часть возвращается после второго толчка.</td></tr>
+</table>
+</div>
+</div>
+
+<div class="callout insight"><strong>Универсальный приём</strong>
+«Принимаю + предлагаю вариант». Никогда не закрывай клиента агрессивно. Добавляй «если в ближайшие месяцы появится возможность — обязательно дайте знать». Это реально возвращает: в корпусе десятки «Мария Сергеевна, мы созрели» через 3–6 месяцев после ухода.</div>
+
+<!-- 10 TONE -->
+<h2 id="tone"><span class="num">10</span>Голос центра</h2>
+<p class="sub">То, что в бизнес-школах называют tone of voice, у тебя уже есть. Это <em>бренд</em> — и его надо беречь.</p>
+
+<div class="twocol">
+<div class="col can"><h4>Так — можно</h4>
+<ul class="check">
+  <li>Обращение по имени в каждом сообщении</li>
+  <li>Уменьшительно-ласкательные формы к детям: Томирисочка, Миланочка, Назимуша</li>
+  <li>Эмодзи 🌿 🌷 🤗 💐 ❤️ ✨ — 1–2 на сообщение</li>
+  <li>Короткими сообщениями пачкой, а не простынями</li>
+  <li>Признание эмоций: «Понимаю», «Всё обязательно будет хорошо»</li>
+  <li>Подпись: «с заботой о ребёнке, пониманием родителей и профессиональным подходом»</li>
+  <li>Поздравления с ДР ребёнка, 8 марта, Наурыз, Новый год</li>
+  <li>Пожелания выздоровления: «выздоравливайте скорее 🌿»</li>
+</ul>
+</div>
+<div class="col cant"><h4>Так — нельзя</h4>
+<ul class="cross">
+  <li>Называть цену до квалификации</li>
+  <li>Давать точный адрес до оплаты брони</li>
+  <li>Ставить медицинские диагнозы</li>
+  <li>Обещать результат «всё получится», «обязательно поможем»</li>
+  <li>Кидать 1000 коротких сообщений, если не отвечают</li>
+  <li>Голосовые сообщения — родители сами просят их исключить</li>
+  <li>Раскрывать разные тарифы для «старых» и «новых» клиентов</li>
+  <li>Спорить о перерасчёте — объяснить правило и передать человеку</li>
+</ul>
+</div>
+</div>
+
+<div class="card tint">
+<h4 style="margin-top:0">Пример реплики, которую бот должен уметь выдавать дословно</h4>
+<div class="quote">Имя, благодарим за информацию, которой Вы делитесь — все данные мы учтём, теперь наша задача в живую познакомиться с ребёнком и продиагностировать проявление речевых, поведенческих и других навыков, влияющих на развитие 🌿
+<span class="src">— универсальный переход к ДИ из чек-листа</span>
+</div>
+<div class="quote">Жанмира, мы поздравляем Вас с днём рождения дочери! 💛
+Пусть её путь будет светлым, радостным и наполненным добрыми встречами.
+Материнство — огромная работа, и Вы так заботливо и хорошо с ней справляетесь! 🌿
+<span class="src">— реальная реплика, триггер «ДР ребёнка»</span>
+</div>
+</div>
+
+<!-- 11 OPS -->
+<h2 id="ops"><span class="num">11</span>Ежедневная рутина — на что уходит время</h2>
+<p class="sub">Из корпуса чатов ясно видно, что 70% работы админа — это операционная рутина. Она никуда не денется — но её можно «причесать».</p>
+
+<div class="grid g2">
+<div class="card"><h3 style="margin-top:0">Каждый день</h3>
+<ul class="clean">
+  <li>Подтверждение брони на завтра</li>
+  <li>Напоминание за сутки до занятия / до ДИ</li>
+  <li>«Мы опаздываем на 5–10 минут»</li>
+  <li>«Приболели, сегодня не будем»</li>
+  <li>«Можно сегодня пораньше?»</li>
+  <li>«Оплачу через Каспи»</li>
+  <li>Передача информации от родителя к специалисту и обратно</li>
+</ul>
+</div>
+<div class="card"><h3 style="margin-top:0">Каждый месяц</h3>
+<ul class="clean">
+  <li>Расчёт количества занятий по ребёнку</li>
+  <li>Сумма к оплате до 5 числа</li>
+  <li>Перерасчёты за предупреждённые пропуски</li>
+  <li>Каспи-ссылки и сбор чеков</li>
+  <li>Объявления о повышении тарифа / изменениях правил</li>
+  <li>Отчёты методиста родителям</li>
+</ul>
+</div>
+<div class="card"><h3 style="margin-top:0">Сезонно</h3>
+<ul class="clean">
+  <li>Набор в ПШ (лето–август)</li>
+  <li>Формирование групп (сентябрь)</li>
+  <li>Новогодние утренники (декабрь)</li>
+  <li>Каникулы и изменения расписания</li>
+  <li>Отпусковые перерасчёты</li>
+  <li>8 марта, 1 июня, Наурыз, Новый год</li>
+</ul>
+</div>
+<div class="card"><h3 style="margin-top:0">Редкие случаи</h3>
+<ul class="clean">
+  <li>Смена специалиста / времени</li>
+  <li>Больница, реабилитация, отъезд</li>
+  <li>Возврат через несколько месяцев</li>
+  <li>Согласие на фото/видео</li>
+  <li>Финансовые нестандарты (возврат денег)</li>
+</ul>
+</div>
+</div>
+
+<!-- 12 GAPS -->
+<h2 id="gaps"><span class="num">12</span>Что сейчас болит</h2>
+
+<div class="grid g2">
+<div class="card"><h4 style="margin-top:0;color:var(--bad)">Критично</h4>
+<ul class="clean">
+  <li><b>Анкета не заполняется.</b> 1 случай из 98. Педагог идёт на ДИ вслепую.</li>
+  <li><b>Нет авто follow-up.</b> 61% чатов висят. Это десятки невостребованных заявок в год.</li>
+  <li><b>Нет регламента «перестал ходить».</b> Клиент исчезает — никто не пишет.</li>
+  <li><b>Цены в 3–4 местах разные.</b> В одних чатах 4000, в других 4500, в третьих 6500. Правило менялось — в головах клиентов каша.</li>
+</ul>
+</div>
+<div class="card"><h4 style="margin-top:0;color:var(--warn)">Среднее</h4>
+<ul class="clean">
+  <li>Голосовые от родителей — сложно обрабатывать быстро.</li>
+  <li>Пересчёты за пропуски — правило поменялось в январе, клиенты путаются.</li>
+  <li>Нестандартные диагнозы — менеджер «не знает что спрашивать».</li>
+  <li>Когда Мария Сергеевна занята — ответ задерживается.</li>
+</ul>
+</div>
+<div class="card"><h4 style="margin-top:0;color:var(--ok)">Твои сильные стороны</h4>
+<ul class="clean">
+  <li>Репутация Марии Сергеевны + сарафан.</li>
+  <li>Чек-лист уже хороший — есть костяк.</li>
+  <li>Команда закрывает все возрастные группы.</li>
+  <li>Прайс структурный, Kaspi настроен.</li>
+  <li>Тёплый бренд — клиенты сами возвращаются.</li>
+</ul>
+</div>
+<div class="card"><h4 style="margin-top:0;color:var(--ink-2)">Неочевидные возможности</h4>
+<ul class="clean">
+  <li>Поздравления с ДР — минута работы, месяц лояльности.</li>
+  <li>Допродажа АФК / массажа уже существующим клиентам.</li>
+  <li>Автопереход из М+М в дефектолога по мере роста.</li>
+  <li>Waitlist на ПШ на следующий учебный год.</li>
+  <li>Реактивация «не был 30 дней» одним сообщением.</li>
+</ul>
+</div>
+</div>
+
+<!-- 13 BOT HOW -->
+<h2 id="bot-how"><span class="num">13</span>Как говорит бот — сценарии</h2>
+<p class="sub">Без технологии. Просто — что увидит мама, открыв твой Telegram-канал.</p>
+
+<div class="card">
+<h3 style="margin-top:0">Сценарий А · Новая мама с явным запросом</h3>
+<div class="chat">
+<div class="title">Имитация диалога</div>
+<div class="msg p"><div class="who">Мама</div><div class="bubble">Здравствуйте. Сыну 1 год 8 месяцев, не разговаривает, 2-3 звукоподражания</div></div>
+<div class="msg c"><div class="who">Бот</div><div class="bubble">Здравствуйте! Вас приветствует Центр Коррекции Речи Марии Анцевой 🌿</div></div>
+<div class="msg c"><div class="who">Бот</div><div class="bubble">Подскажите, как к Вам обращаться?</div></div>
+<div class="msg p"><div class="who">Мама</div><div class="bubble">Айгерим</div></div>
+<div class="msg c"><div class="who">Бот</div><div class="bubble">Очень приятно, Айгерим! Спасибо, что написали. Расскажите, пожалуйста — ребёнок понимает обращённую речь, когда просите что-то показать?</div></div>
+<div class="msg p"><div class="who">Мама</div><div class="bubble">Да, понимает всё</div></div>
+<div class="msg c"><div class="who">Бот</div><div class="bubble">Замечательно, это хороший сигнал. Посещаете садик или дополнительные занятия?</div></div>
+<div class="msg c"><div class="who">Бот</div><div class="bubble">И ещё — могли бы Вы прислать короткое видео свободной игры? Буквально пара минут, как ребёнок играет дома. Это нам очень поможет.</div></div>
+</div>
+<p style="margin-top:16px;color:var(--ink-2);font-size:14.5px">Обрати внимание: бот не спрашивает про деньги, не даёт прайс, не упоминает диагнозы. Собирает информацию тем же тёплым тоном, что и лучшие чаты в корпусе.</p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">Сценарий Б · «Сколько стоит?» в лоб</h3>
+<div class="chat">
+<div class="msg p"><div class="who">Папа</div><div class="bubble">Сколько стоят занятия с логопедом?</div></div>
+<div class="msg c"><div class="who">Бот</div><div class="bubble">Здравствуйте! Хороший вопрос, обязательно сориентируем.</div></div>
+<div class="msg c"><div class="who">Бот</div><div class="bubble">Родители обращаются к нам с самыми разными запросами, поэтому, чтобы не ошибиться с рекомендацией, уточним буквально 2 момента. Подскажите, возраст ребёнка и что именно Вас беспокоит?</div></div>
+</div>
+<p style="margin-top:16px;color:var(--ink-2);font-size:14.5px">Без «не могу ответить без диагностики». Без обороны. Чисто и уважительно. После ответа родителя бот ведёт стандартной веткой и выходит на цену <em>после</em> объяснения что такое диагностика.</p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">Сценарий В · Эмоциональный клиент</h3>
+<div class="chat">
+<div class="msg p"><div class="who">Мама</div><div class="bubble">Здравствуйте. Психиатр сказала аутизм. В больнице на Рыскулова говорят, есть черты, но подтвердить не могут. У него плохой сон, капризы, 7 лет, почти не говорит. Я уже не знаю куда бежать 😔</div></div>
+<div class="msg c"><div class="who">Бот</div><div class="bubble">Здравствуйте 🌿 Спасибо, что написали нам. Это действительно тяжело, когда даже врачи дают разные ответы.</div></div>
+<div class="msg c"><div class="who">Бот</div><div class="bubble">Я сейчас передам Ваше обращение лично Марии Сергеевне — она свяжется с Вами в течение дня. Мы не будем торопить с решениями, сначала спокойно поговорим.</div></div>
+</div>
+<div style="margin-top:14px;padding:12px 14px;background:var(--brand-soft);border-radius:10px;font-size:14px;color:var(--ink-2)">
+<b style="color:var(--ink)">Что произошло на самом деле:</b> бот распознал «сложный диагноз + эмоциональный тон» и <em>автоматически передал диалог Марии Сергеевне</em>. Мама увидела одно спокойное сообщение и заботу. Через пару часов к ней пришёл живой человек. Бот такие случаи <em>не разруливает сам</em> — и это правильно.
+</div>
+</div>
+
+<!-- 14 BOT WHAT -->
+<h2 id="bot-what"><span class="num">14</span>Что умеет бот — по-человечески</h2>
+<p class="sub">Две большие зоны ответственности. Первая — первичный контакт. Вторая — удобное управление уже активными клиентами. <em>Это не автоматизация вместо человека</em>, это централизация и дисциплина.</p>
+
+<div class="hl">
+<h3>Главное правило</h3>
+<p>Бот <b>полностью закрывает первый контакт</b> — от «Здравствуйте» до оплаченной диагностики. Дальше — всё, что связано с оплатой, напоминаниями, пропусками, переносами — делает бот <em>под управлением админа</em>. Это не «сам догадался и написал», это «админ нажал одну кнопку, и ушло идеальное сообщение». И в любой момент — живой человек может перехватить диалог движением пальца.</p>
+</div>
+
+<h3>Зона 1 · Первичный контакт и квалификация (автомат)</h3>
+<div class="grid g2">
+<div class="card"><h4 style="margin-top:0">Приём и знакомство</h4>
+<ul class="clean">
+  <li>Приветствует от имени центра, спрашивает имя</li>
+  <li>Выясняет возраст и запрос — точно так, как в чек-листе</li>
+  <li>Ведёт по дереву по возрасту: ветка 0-2, 2-5, 4-6, 5-7, школьники, подростки</li>
+</ul>
+</div>
+<div class="card"><h4 style="margin-top:0">Работа с цифрами и медиа</h4>
+<ul class="clean">
+  <li>Принимает и читает голосовые сообщения мамы (транскрибирует внутри)</li>
+  <li>Просит и принимает видео ребёнка, фото заключений врача</li>
+  <li>Сохраняет всё в карточку клиента</li>
+</ul>
+</div>
+<div class="card"><h4 style="margin-top:0">Подведение к диагностике</h4>
+<ul class="clean">
+  <li>Объясняет что такое ДИ и что туда входит — своим тоном, без шаблонной сухости</li>
+  <li>Выдаёт цену в нужный момент, а не раньше</li>
+  <li>Подбирает 2-3 окна из календаря специалиста</li>
+</ul>
+</div>
+<div class="card"><h4 style="margin-top:0">Закрытие на оплату</h4>
+<ul class="clean">
+  <li>Спрашивает ФИО + ДР ребёнка, имя родителя</li>
+  <li>Выставляет Kaspi-счёт</li>
+  <li>Принимает чек, подтверждает бронь</li>
+  <li>Выдаёт адрес и ссылку 2ГИС</li>
+  <li>Отправляет анкету в форме прямо в Telegram</li>
+</ul>
+</div>
+</div>
+
+<h3>Зона 2 · Централизованное управление активными клиентами (полуавтомат)</h3>
+<p style="color:var(--ink-2)">Всё что ниже — не автоматизация «вместо человека», а удобные инструменты управления из одного окна. Счета, напоминания, рассылки, согласования — делаются <em>из админки</em> или <em>из отдельного админ-бота</em>, а уходят клиенту через тот же канал, где с ним общались изначально.</p>
+
+<div class="grid g2">
+<div class="card"><h4 style="margin-top:0">Выставление оплат</h4>
+<p>Админ в админке выбирает ребёнка, система считает занятия за месяц, генерирует сумму и текст — админ нажимает «отправить». Клиент получает через бота одно сообщение с суммой, правилами и Kaspi-ссылкой. Не каждое сообщение пишется вручную.</p>
+</div>
+<div class="card"><h4 style="margin-top:0">Напоминания за сутки</h4>
+<p>За 24 часа до занятия — автоматическое «ждём Вас завтра в 14:30 🌿». Родитель может прямо там нажать «подтверждаю» или «не смогу». Админ видит в админке сводку на завтра: кто подтвердил, кто нет.</p>
+</div>
+<div class="card"><h4 style="margin-top:0">Перенос занятий</h4>
+<p>Родитель нажимает «перенести» в боте — выбирает день и окно. Бот сверяется с расписанием и либо подтверждает, либо предлагает соседние варианты. Админ видит событие, а не получает очередное «ой, не успеем».</p>
+</div>
+<div class="card"><h4 style="margin-top:0">Согласия и анкеты</h4>
+<p>Согласие на фото/видео, анкета перед ДИ, сбор обратной связи — все формы встроены в бот. Родитель заполняет не в ватсапе на коленке, а в аккуратной форме внутри Telegram.</p>
+</div>
+<div class="card"><h4 style="margin-top:0">Рассылки</h4>
+<p>Утренник, смена правил, повышение цен, Новый год — одно нажатие в админке, уходит всем нужным сегментам. Без копи-паста в 80 чатов.</p>
+</div>
+<div class="card"><h4 style="margin-top:0">Follow-up и триггеры</h4>
+<p>«Не ответил 48 часов после цены» — мягкое напоминание. «Не был 30 дней» — «как Вы? ждём Вас, как соберётесь». «ДР ребёнка» — тёплое поздравление. Всё настраивается один раз, дальше идёт само.</p>
+</div>
+</div>
+
+<!-- 15 BOT NOT -->
+<h2 id="bot-not"><span class="num">15</span>Границы бота — что он точно не сделает</h2>
+<p class="sub">Это не список ограничений. Это карта твоей безопасности — и ответ на естественную тревогу «а вдруг он ляпнет что-то не то маме».</p>
+
+<div class="grid g2">
+<div class="card"><h4 style="margin-top:0">Никогда</h4>
+<ul class="cross">
+  <li>Не ставит медицинских диагнозов</li>
+  <li>Не обещает результатов занятий</li>
+  <li>Не называет цену до квалификации</li>
+  <li>Не даёт точный адрес до оплаты</li>
+  <li>Не спорит о деньгах</li>
+  <li>Не раскрывает внутренние тарифы (старые/новые)</li>
+  <li>Не использует голосовые</li>
+  <li>Не обрабатывает сложные диагнозы — эскалирует</li>
+</ul>
+</div>
+<div class="card"><h4 style="margin-top:0">Всегда эскалирует человеку</h4>
+<ul class="check">
+  <li>Если мама эмоционально раздражена или расстроена</li>
+  <li>Если сложный или противоречивый диагноз</li>
+  <li>Если родитель прямо просит «человека»</li>
+  <li>Если тема вне дерева (возврат денег, жалоба, юридика)</li>
+  <li>Если клиент — возвращенец</li>
+  <li>Если разговор ушёл в личное (семейные ситуации, здоровье мамы)</li>
+  <li>Если три и более сообщений не вписываются в ожидаемый поток</li>
+</ul>
+</div>
+</div>
+
+<div class="callout bad"><strong>Важно понимать</strong>
+Бот не пытается быть умнее тебя. Он пытается быть <em>дисциплинированнее</em>. Его сила — ровное следование скрипту, круглосуточная доступность, внимательность к мелочам (кто не ответил, кто не заполнил, у кого ДР). Его слабость — импровизация, эмпатия в кризисе, нестандартные запросы. Поэтому граница чёткая: <b>как только воздух пахнет «не по сценарию» — бот молчит, зовёт живого человека</b>.</div>
+
+<!-- 16 HANDOFF -->
+<h2 id="handoff"><span class="num">16</span>Момент передачи живому человеку</h2>
+<p class="sub">Самая важная и самая недооцениваемая часть бота. Если эта механика работает — бот полезен. Если нет — лучше без него.</p>
+
+<div class="card">
+<h3 style="margin-top:0">Как это выглядит для родителя</h3>
+<p>Никак. Родитель не знает, что говорит с ботом или человеком. Для него — один бот центра, одно имя, один аккаунт в Telegram. Он пишет туда свои вопросы и получает ответы — иногда через 10 секунд, иногда через полчаса. Тон не меняется — потому что тон бота и тон центра одинаковые.</p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">Как это выглядит для админа</h3>
+<ol class="steps">
+<li><b>Сигнал в админ-чате.</b><span class="d">Когда бот чувствует, что надо эскалировать (сложный диагноз, эмоция, возвращенец, нестандартный запрос) — в отдельный телеграм-чат, где сидят админ и Мария Сергеевна, прилетает карточка: «Клиент Айгерим, сын 1,8, запрос — запуск речи. Дошли до обсуждения видео. Причина передачи: родитель написал о семейной ситуации (развод). Последнее сообщение: „не знаю, как теперь с расписанием, муж больше с нами не живёт“. Взять диалог?»</span></li>
+<li><b>«Взять» одним нажатием.</b><span class="d">Админ нажимает «Беру» в карточке. Бот замолкает. Все новые сообщения клиента приходят админу напрямую — через того же бота. Админ отвечает обычным текстом — бот пересылает. Родитель видит тот же самый аккаунт, ничего не заметил.</span></li>
+<li><b>Бот продолжает слушать.</b><span class="d">Пока админ ведёт диалог, бот <em>записывает</em> всё, что пишут. Это потом позволит без боли вернуться к автоматическому режиму — потому что бот будет знать всё, что произошло, пока его не было.</span></li>
+<li><b>«Отдать обратно».</b><span class="d">Когда нестандарт закрыт, админ нажимает «Бот продолжает». Бот возобновляет работу с полным контекстом — включая то, что сказал админ. Родитель снова видит автоматические напоминания и подбор окон.</span></li>
+</ol>
+</div>
+
+<div class="card soft">
+<h3 style="margin-top:0">Ручное подключение — без сигнала от бота</h3>
+<p>В любой момент, даже если бот ведёт диалог спокойно и всё идёт по сценарию — админ может зайти в админку, увидеть любой чат и нажать «беру». Например, увидел сообщение, которое хочется написать самой — берёшь. Закончила — отдала. Это главное в философии: <b>бот не борется с тобой за клиента</b>. Он — твой ассистент, который отходит в тень, когда ты встаёшь со стула.</p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">Что именно триггерит автоматическую эскалацию</h3>
+<div class="grid g2">
+<ul class="clean">
+  <li>Слова «жалоба», «вернуть деньги», «отказаться»</li>
+  <li>Эмоциональный тон: ⁣плачущие смайлы, «не знаю что делать»</li>
+  <li>Сложные / противоречивые диагнозы</li>
+  <li>Родитель просит «человека», «Марию Сергеевну лично»</li>
+  <li>Тема вне дерева (переезд, развод, смерть в семье)</li>
+</ul>
+<ul class="clean">
+  <li>Клиент опознан как возвращенец</li>
+  <li>3 сообщения подряд, которые бот не смог классифицировать</li>
+  <li>Длительное молчание после оплаты</li>
+  <li>Оплата чеком, сумма не совпадает</li>
+  <li>Запрос на подростка 14-16</li>
+</ul>
+</div>
+</div>
+
+<!-- 17 LEVERS -->
+<h2 id="levers"><span class="num">17</span>Рычаги роста · 3 самых простых действия на месяц</h2>
+<p class="sub">Даже до того, как бот выйдет в работу, есть три вещи, которые быстро дадут прирост.</p>
+
+<div class="grid g3">
+<div class="card" style="position:relative;padding-top:40px"><div class="big-num" style="position:absolute;top:14px;left:22px;font-size:42px">1</div>
+<h3 style="margin-top:20px">Починить анкету</h3>
+<p>Сейчас заполняет 1 из 100. Должно — 80. Сделать её Telegram-формой, с напоминанием за двое суток до ДИ: «Анкета не заполнена, пришлём ссылку ещё раз?» → кнопка «Открыть». Дополнительно — попросить в саму форму видео. В одном месте, в один клик.</p>
+<p style="color:var(--accent-2);font-weight:600;font-size:14px">Эффект: специалист готов к ДИ → конверсия «ДИ → 1 месяц оплаты» растёт на 10–15%.</p>
+</div>
+<div class="card" style="position:relative;padding-top:40px"><div class="big-num" style="position:absolute;top:14px;left:22px;font-size:42px">2</div>
+<h3 style="margin-top:20px">Возвращать молчащих</h3>
+<p>61% чатов висят. Если добавить автоматический follow-up через 24 и 48 часов — «Айгерим, подскажите, удобно ли сейчас двигаться дальше? Если не получится сейчас — напишите нам, как будет возможно 🌿» — в реальной практике возвращается 15–25% молчащих. Это бесплатный канал.</p>
+<p style="color:var(--accent-2);font-weight:600;font-size:14px">Эффект: +10–15 записей в месяц из входящих, которые сейчас просто теряются.</p>
+</div>
+<div class="card" style="position:relative;padding-top:40px"><div class="big-num" style="position:absolute;top:14px;left:22px;font-size:42px">3</div>
+<h3 style="margin-top:20px">Оформить сарафан</h3>
+<p>Пока это случайность. Сделать из неё продукт: каждому клиенту — личная ссылка «пригласить подругу». Кто привёл — получает скидку 10% на месяц. Кто пришёл — получает скидку на ДИ. Трекается в админке. Это не чистая маркетинговая механика, это <em>формализация того, что уже работает</em>.</p>
+<p style="color:var(--accent-2);font-weight:600;font-size:14px">Эффект: через квартал 20–30% новых заявок — с реферальным кодом.</p>
+</div>
+</div>
+
+<div class="callout ok"><strong>Почему именно эти три</strong>
+Они дешевле всего: все три — это поток, который уже идёт мимо тебя. Ты не тратишь на рекламу, не меняешь продукт, не расширяешь команду. Просто перестаёшь <em>терять то, что уже есть</em>.</div>
+
+<!-- 18 MKTG -->
+<h2 id="mktg"><span class="num">18</span>Маркетинг — что реально работает в Караганде</h2>
+
+<div class="grid g2">
+<div class="card"><h4 style="margin-top:0">Что уже приносит клиентов</h4>
+<ul class="clean">
+  <li><b>2ГИС.</b> В чатах постоянные «Пишу из приложения 2ГИС». Это вход географический — мама искала логопеда рядом.</li>
+  <li><b>Instagram.</b> Профиль работает. Родители заходят за методиками и атмосферой, потом переходят в чат.</li>
+  <li><b>Сарафан.</b> «Воспитатели в Рукавичке посоветовали», «подруга ходила», «невропатолог направил».</li>
+  <li><b>Врачи-партнёры.</b> Невропатологи, остеопаты. Тихий, но стабильный канал.</li>
+  <li><b>Утренники.</b> Новогодние мероприятия возвращают и привязывают — дети три дня потом рассказывают.</li>
+</ul>
+</div>
+<div class="card"><h4 style="margin-top:0">Что имеет смысл усилить</h4>
+<ul class="clean">
+  <li><b>6 reels по направлениям.</b> Каждый в 30 секунд объясняет, когда идти к дефектологу / логопеду / на ПШ / М+М / АФК / к нейропсихологу. Каждый ведёт в бота.</li>
+  <li><b>QR-визитки для врачей-партнёров.</b> Невролог даёт родителю визитку «запишись к Анцевой». Бот логирует источник.</li>
+  <li><b>Сезонные воронки.</b> ПШ-набор начинать в феврале, а не в августе. М+М — осенью. Утренники — повод вернуть «спящих».</li>
+  <li><b>Отзывы — как продукт.</b> Через 7 дней после ДИ — автоматический запрос короткого отзыва. После курса — полный кейс в Instagram с согласия.</li>
+</ul>
+</div>
+</div>
+
+<div class="card tint">
+<h3 style="margin-top:0">Позиционирование, которое держит центр</h3>
+<p>«Не клиника, не детский сад, а команда, которая возьмёт вашего ребёнка за руку и доведёт до результата, а вас — до спокойствия». Это не слоган — это <em>фактическое обещание</em>, которое уже сейчас выполняется. Любая новая коммуникация — реклама, бот, сайт — должна быть про это, а не про «постановка звуков Р, Ш, Ж с 4-х лет».</p>
+</div>
+
+<!-- 19 KPI -->
+<h2 id="kpi"><span class="num">19</span>Что мерить — и какие цифры смотреть</h2>
+<p class="sub">Просто и полезно. Половина из этих цифр сейчас не собирается вообще — бот их соберёт автоматически.</p>
+
+<div class="grid g3">
+<div class="card"><h4 style="margin-top:0">Воронка</h4>
+<ul class="clean">
+  <li>Новых заявок в неделю</li>
+  <li>% дошедших до слота ДИ</li>
+  <li>% оплативших бронь</li>
+  <li>% явок на ДИ</li>
+  <li>% оплативших первый месяц</li>
+</ul>
+</div>
+<div class="card"><h4 style="margin-top:0">Качество диалога</h4>
+<ul class="clean">
+  <li>% анкет до ДИ (цель &gt;80%)</li>
+  <li>% присланных видео</li>
+  <li>% диалогов с передачей человеку</li>
+  <li>Среднее время ответа бота</li>
+  <li>% чатов «без ответа 48 часов»</li>
+</ul>
+</div>
+<div class="card"><h4 style="margin-top:0">Деньги</h4>
+<ul class="clean">
+  <li>Средний чек на клиента</li>
+  <li>LTV клиента (месяцы × чек)</li>
+  <li>Выручка по направлениям</li>
+  <li>% оплат до 5 числа</li>
+  <li>Сумма задолженности</li>
+</ul>
+</div>
+<div class="card"><h4 style="margin-top:0">Источники</h4>
+<ul class="clean">
+  <li>Распределение заявок (2ГИС, Instagram, рекомендация, прямой)</li>
+  <li>Реферальные цепочки (кто привёл кого)</li>
+  <li>Стоимость клиента по каналам</li>
+</ul>
+</div>
+<div class="card"><h4 style="margin-top:0">Удержание</h4>
+<ul class="clean">
+  <li>Отток в месяц (%)</li>
+  <li>Возвратившиеся после паузы</li>
+  <li>Частота переносов на клиента</li>
+  <li>Клиенты с «тихим уходом»</li>
+</ul>
+</div>
+<div class="card"><h4 style="margin-top:0">Загрузка</h4>
+<ul class="clean">
+  <li>Занятость специалистов по расписанию</li>
+  <li>Количество пропусков с перерасчётом</li>
+  <li>Количество занятий «день-в-день» (не возмещаются)</li>
+</ul>
+</div>
+</div>
+
+<footer>
+  Глубокий разбор 98 чатов и чек-листа менеджера · Центр Коррекции Речи Анцевой · Караганда · апрель 2026.<br>
+  В этом документе не используются персональные данные — только имена, упомянутые в переписке, без номеров и адресов.
+</footer>
+
+</main>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad:true,theme:'base',securityLevel:'loose',
+    flowchart:{useMaxWidth:true,htmlLabels:true},
+    themeVariables:{
+      fontFamily:'inherit',
+      primaryColor:'#f5ede0',
+      primaryTextColor:'#1f2328',
+      primaryBorderColor:'#b6895b',
+      lineColor:'#8a6b45',
+      secondaryColor:'#fff',
+      tertiaryColor:'#fbf7ef'
+    }
+  });
+
+  // Обёртки таблиц для горизонтального скролла
+  document.querySelectorAll('table').forEach(t=>{
+    if(t.parentElement && t.parentElement.classList.contains('table-wrap'))return;
+    const w=document.createElement('div');w.className='table-wrap';
+    t.parentNode.insertBefore(w,t);w.appendChild(t);
+  });
+
+  // Бургер-меню
+  const burger=document.getElementById('burger');
+  const drawer=document.getElementById('drawer');
+  const backdrop=document.getElementById('backdrop');
+  function openDrawer(){document.body.classList.add('drawer-open');drawer.setAttribute('aria-hidden','false')}
+  function closeDrawer(){document.body.classList.remove('drawer-open');drawer.setAttribute('aria-hidden','true')}
+  burger.addEventListener('click',()=>document.body.classList.contains('drawer-open')?closeDrawer():openDrawer());
+  backdrop.addEventListener('click',closeDrawer);
+  drawer.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeDrawer));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
+
+  // Активная ссылка в TOC при скролле
+  const sections=[...document.querySelectorAll('h2[id]')];
+  const tocLinks=[...document.querySelectorAll('.toc-desktop a'), ...document.querySelectorAll('.drawer a')];
+  const activate=id=>{
+    tocLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+id));
+  };
+  const observer=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting)activate(e.target.id)});
+  },{rootMargin:'-20% 0px -70% 0px'});
+  sections.forEach(s=>observer.observe(s));
+</script>
+</body>
+</html>
