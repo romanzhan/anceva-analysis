@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Inbox · anceva.admin{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-4">
+  <h1 class="text-xl font-semibold">Inbox</h1>
+  <div class="flex gap-2">
+    <button class="btn btn-primary">Все</button>
+    <button class="btn btn-ghost">Новые</button>
+    <button class="btn btn-ghost">Без ответа 24ч</button>
+    <button class="btn btn-ghost">Эскалированные</button>
+    <button class="btn btn-ghost">Мои</button>
+  </div>
+</div>
+
+<div class="card">
+  {% if dialogs %}
+    <div class="divide-y divide-gray-200">
+      {% for d in dialogs %}
+      <div class="py-3 flex items-center gap-4">
+        <div class="font-medium">{{ d.client_name or '—' }}</div>
+        <div class="flex-1 text-sm text-gray-500 truncate">{{ d.snippet }}</div>
+        <a href="/admin/inbox/{{ d.id }}" class="btn btn-ghost">Открыть</a>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-sm text-gray-500 py-8 text-center">Диалогов пока нет.</p>
+  {% endif %}
+</div>
+{% endblock %}

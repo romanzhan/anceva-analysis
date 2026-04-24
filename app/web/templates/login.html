@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Вход · Anceva Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50 flex items-center justify-center">
+  <div class="w-full max-w-sm bg-white rounded-2xl border border-gray-200 p-8 text-center">
+    <div class="text-[#3a52d6] font-bold text-lg mb-2">anceva.admin</div>
+    <h1 class="text-xl font-semibold mb-6">Вход в панель</h1>
+    <p class="text-sm text-gray-600 mb-6">
+      Авторизация через Telegram.<br>
+      Только для администраторов центра.
+    </p>
+    <script async
+      src="https://telegram.org/js/telegram-widget.js?22"
+      data-telegram-login="{{ bot_username }}"
+      data-size="large"
+      data-auth-url="/auth/telegram"
+      data-request-access="write"></script>
+
+    {% if request.query_params.get('error') %}
+    <p class="text-sm text-red-600 mt-4">
+      {% set err = request.query_params.get('error') %}
+      {% if err == 'invalid' %}Подпись Telegram не прошла проверку.
+      {% elif err == 'no_access' %}У этого аккаунта нет доступа.
+      {% elif err == 'disabled' %}Доступ отключён.
+      {% else %}Что-то пошло не так.{% endif %}
+    </p>
+    {% endif %}
+  </div>
+</body>
+</html>

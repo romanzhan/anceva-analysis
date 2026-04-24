@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Согласие на обработку ПД</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <style>
+    body { background: var(--tg-theme-bg-color, #fff); color: var(--tg-theme-text-color, #000); }
+  </style>
+</head>
+<body class="min-h-screen p-4 text-[15px]">
+  <div x-data="consentApp()" class="max-w-lg mx-auto">
+    <h1 class="text-xl font-bold mb-3">Согласие на обработку персональных данных</h1>
+    <p class="text-sm text-gray-500 mb-4">Версия {{ version }}</p>
+
+    <div class="prose prose-sm max-w-none space-y-3">
+      <p>Вы даёте согласие ООО «Центр Коррекции Речи Анцевой» (Караганда) на обработку персональных данных
+      Ваших и Вашего ребёнка с целью:</p>
+      <ul class="list-disc pl-5">
+        <li>ведения учёта посещений и оплат;</li>
+        <li>подготовки педагогов к занятиям;</li>
+        <li>внутренней коммуникации через Telegram;</li>
+        <li>формирования отчётов по динамике развития ребёнка.</li>
+      </ul>
+      <p>Мы не передаём Ваши данные третьим лицам.
+      Вы можете в любой момент отозвать согласие, написав нам.</p>
+      <p class="text-xs text-gray-500">Полный текст — в боте по команде /privacy.</p>
+    </div>
+
+    <label class="flex items-start gap-3 mt-6 p-3 border rounded-lg cursor-pointer">
+      <input type="checkbox" x-model="agreed" class="mt-1 w-5 h-5">
+      <span>Я согласен(-на) с условиями обработки персональных данных.</span>
+    </label>
+
+    <button
+      class="w-full mt-4 py-3 rounded-lg text-white font-semibold transition-colors"
+      :class="agreed ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-300 cursor-not-allowed'"
+      :disabled="!agreed || loading"
+      @click="submit()">
+      <span x-show="!loading">Подтвердить</span>
+      <span x-show="loading">Отправляем…</span>
+    </button>
+
+    <p x-show="error" x-text="error" class="text-sm text-red-600 mt-3"></p>
+  </div>
+
+  <script>
+    function consentApp() {
+      return {
+        agreed: false,
+        loading: false,
+        error: "",
+        tg: window.Telegram?.WebApp,
+        init() {
+          this.tg?.ready();
+          this.tg?.expand();
+        },
+        async submit() {
+          this.loading = true;
+          this.error = "";
+          try {
+            const fd = new FormData();
+            fd.append("initData", this.tg?.initData || "");
+            const res = await fetch("/app/consent/accept", { method: "POST", body: fd });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            this.tg?.showAlert("Согласие принято. Спасибо! 🌿", () => this.tg?.close());
+          } catch (e) {
+            this.error = "Не получилось отправить: " + e.message;
+          } finally {
+            this.loading = false;
+          }
+        },
+      };
+    }
+  </script>
+</body>
+</html>

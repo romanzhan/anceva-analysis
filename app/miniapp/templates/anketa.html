@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Анкета ребёнка</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+<body class="min-h-screen p-4 text-[15px]">
+  <div x-data="anketaApp()" class="max-w-lg mx-auto">
+    <h1 class="text-xl font-bold mb-2">Анкета ребёнка</h1>
+    <p class="text-sm text-gray-500 mb-5">
+      Эти ответы нужны специалисту, чтобы подготовиться к диагностике.
+      Все поля конфиденциальны. Заполнение занимает 5–7 минут.
+    </p>
+
+    <form @submit.prevent="submit()" class="space-y-4">
+      <label class="block">
+        <span class="text-sm font-medium">ФИО ребёнка</span>
+        <input type="text" x-model="answers.full_name"
+               class="mt-1 block w-full rounded-md border-gray-300" required>
+      </label>
+
+      <label class="block">
+        <span class="text-sm font-medium">Дата рождения</span>
+        <input type="date" x-model="answers.dob"
+               class="mt-1 block w-full rounded-md border-gray-300" required>
+      </label>
+
+      <label class="block">
+        <span class="text-sm font-medium">Посещает ли садик?</span>
+        <select x-model="answers.kindergarten" class="mt-1 block w-full rounded-md border-gray-300">
+          <option value="">—</option>
+          <option value="yes">Да</option>
+          <option value="no">Нет</option>
+        </select>
+      </label>
+
+      <label class="block">
+        <span class="text-sm font-medium">Во сколько дневной сон?</span>
+        <input type="text" x-model="answers.day_sleep"
+               placeholder="например, 13:00-15:00"
+               class="mt-1 block w-full rounded-md border-gray-300">
+      </label>
+
+      <label class="block">
+        <span class="text-sm font-medium">Беременность и роды — особенности</span>
+        <textarea x-model="answers.birth_notes" rows="3"
+                  class="mt-1 block w-full rounded-md border-gray-300"></textarea>
+      </label>
+
+      <label class="block">
+        <span class="text-sm font-medium">Есть ли заключения врачей? Какие?</span>
+        <textarea x-model="answers.diagnoses" rows="3"
+                  placeholder="например: невропатолог поставил ЗРР, рекомендовал обследование"
+                  class="mt-1 block w-full rounded-md border-gray-300"></textarea>
+      </label>
+
+      <label class="block">
+        <span class="text-sm font-medium">Что Вас больше всего беспокоит?</span>
+        <textarea x-model="answers.concerns" rows="3"
+                  class="mt-1 block w-full rounded-md border-gray-300"></textarea>
+      </label>
+
+      <button type="submit"
+              class="w-full mt-6 py-3 rounded-lg text-white font-semibold bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300"
+              :disabled="loading">
+        <span x-show="!loading">Отправить</span>
+        <span x-show="loading">Отправляем…</span>
+      </button>
+
+      <p x-show="error" x-text="error" class="text-sm text-red-600 mt-3"></p>
+    </form>
+  </div>
+
+  <script>
+    function anketaApp() {
+      return {
+        answers: {},
+        loading: false,
+        error: "",
+        tg: window.Telegram?.WebApp,
+        init() {
+          this.tg?.ready();
+          this.tg?.expand();
+        },
+        async submit() {
+          this.loading = true;
+          this.error = "";
+          try {
+            const res = await fetch("/app/anketa/submit", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                initData: this.tg?.initData || "",
+                answers: this.answers,
+              }),
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            this.tg?.showAlert("Анкета принята. Благодарим! 🌿", () => this.tg?.close());
+          } catch (e) {
+            this.error = "Не получилось отправить: " + e.message;
+          } finally {
+            this.loading = false;
+          }
+        },
+      };
+    }
+  </script>
+</body>
+</html>

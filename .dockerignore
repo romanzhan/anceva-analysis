@@ -1,0 +1,42 @@
+.git
+.github
+.venv
+venv
+env
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+.mypy_cache
+.ruff_cache
+htmlcov
+.coverage*
+
+# PII / аналитика
+chats_archive/
+chats_merged*
+chats_stats*
+checklist_dump*
+ЧЕК-ЛИСТ*
+tools/
+CLAUDE.md
+ANALYSIS.html
+TECH.html
+site/
+
+# Локальные данные
+var/
+data/
+uploads/
+media/
+*.sqlite*
+*.db*
+
+# IDE
+.vscode
+.idea
+*.swp
+.DS_Store
+
+# Node
+node_modules

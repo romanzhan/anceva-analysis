@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Клиенты · anceva.admin{% endblock %}
+
+{% block content %}
+<h1 class="text-xl font-semibold mb-4">Клиенты</h1>
+<div class="card">
+  {% if clients %}
+    {% for c in clients %}
+    <div class="py-2 border-b last:border-0">{{ c.name }}</div>
+    {% endfor %}
+  {% else %}
+    <p class="text-sm text-gray-500">Клиентов ещё нет.</p>
+  {% endif %}
+</div>
+{% endblock %}
