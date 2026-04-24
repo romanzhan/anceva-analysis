@@ -274,6 +274,7 @@
     <span>SQLite → Postgres</span>
     <span>FastAPI + htmx</span>
     <span>Railway deploy</span>
+    <span>2 бота · Mini App · без WhatsApp</span>
   </div>
 </header>
 
@@ -1171,9 +1172,9 @@ OUTPUT_SCHEMA = JSON как выше</code></pre>
 <div class="card">
 <h4>Фаза 3</h4>
 <ul class="nodot">
-  <li><b>WhatsApp</b> — через Green API или Meta Business Platform, если решим удержать существующий канал</li>
-  <li><b>Instagram DM</b> — Meta Business API, приём первого сообщения с переадресацией</li>
+  <li><b>Instagram DM</b> — Meta Business API, приём первого сообщения с переадресацией в Telegram</li>
   <li><b>2ГИС</b> — deeplink «написать в Telegram» в профиле</li>
+  <li><b>WhatsApp — не делаем.</b> Решено в рамках MVP оставить только Telegram.</li>
 </ul>
 </div>
 <div class="card">
@@ -1290,13 +1291,15 @@ jobs:
 <div class="card"><h3 style="margin-top:0">Фаза 1 · MVP бот · 2–3 нед</h3>
 <ul class="clean">
   <li>Проект skeleton, БД SQLite, миграции</li>
-  <li>Клиентский бот: приём, квалификация по дереву</li>
+  <li>Клиентский бот (токен #1): приём, квалификация по дереву</li>
+  <li>Админ-бот (токен #2): уведомления, хэндофф, команды</li>
   <li>LLM-слой: мастер-промт, structured output</li>
   <li>Мультимодальность: голос + фото + видео</li>
-  <li>Хэндофф бот↔админ через админ-бот</li>
+  <li>Telegram Mini App — анкета с согласием ПД и загрузкой медиа</li>
   <li>Kaspi-ссылка, приём чека (без OCR)</li>
   <li>Базовый scheduler: follow-up + напоминание</li>
-  <li>Развёртывание на Railway</li>
+  <li>Развёртывание на Railway, подключение домена</li>
+  <li>Shadow mode первые 1-2 недели — все реплики через одобрение Маши</li>
 </ul>
 </div>
 
@@ -1319,7 +1322,7 @@ jobs:
   <li>OCR чеков Kaspi, авто-матчинг</li>
   <li>Сезонные триггеры и автопоздравления</li>
   <li>Реактивация спящих</li>
-  <li>Экспорт в Google Sheets (совместимость)</li>
+  <li>Подключение купленного домена (DNS + SSL на Railway)</li>
 </ul>
 </div>
 
@@ -1366,15 +1369,39 @@ jobs:
 </div>
 
 <div class="card">
-<h4>Открытые вопросы</h4>
+<h4>Решено по MVP · 24 апреля 2026</h4>
+<div class="table-wrap">
+<table>
+<tr><th>Вопрос</th><th>Решение</th><th>Последствия для разработки</th></tr>
+<tr><td>WhatsApp в MVP</td><td><span class="tag ok">Нет</span> только Telegram</td><td>Маркетинговая задача — разворачивать новые заявки в TG. Старые клиенты продолжают в WhatsApp вне бота.</td></tr>
+<tr><td>Анкета</td><td><span class="tag ok">Telegram Mini App</span></td><td>Делаем TG Web App. Нужен HTTPS + домен. Форма — Alpine/Tailwind, submit → backend через initData.</td></tr>
+<tr><td>Количество ботов</td><td><span class="tag ok">Два</span> клиентский + админ-пульт</td><td>Два токена, два процесса aiogram, общая БД.</td></tr>
+<tr><td>Hosting</td><td><span class="tag ok">Railway</span> $5/мес</td><td>Webhook, persistent volume под SQLite, авто-деплой из GitHub.</td></tr>
+<tr><td>Домен</td><td><span class="tag ok">Отдельный</span> (покупается заказчиком)</td><td>Поддомены: <code>admin.*</code> — веб-админка, корень или <code>app.*</code> — Telegram Mini App. SSL через Let's Encrypt на Railway.</td></tr>
+<tr><td>Согласие ПД</td><td><span class="tag ok">В Telegram Mini App</span></td><td>Чекбокс при первом открытии анкеты + ссылка на политику. Без согласия — форма не отправляется. Хранение: <code>clients.pd_consent_at</code>.</td></tr>
+<tr><td>Первичный импорт</td><td><span class="tag ok">Нет</span> с нуля</td><td>База стартует пустая. Функция «добавить клиента вручную» в админке — на случай, если старого клиента нужно ввести.</td></tr>
+</table>
+</div>
+</div>
+
+<div class="card">
+<h4>Что из этого следует для плана работ</h4>
 <ul class="nodot">
-  <li>WhatsApp в MVP — да или нет?</li>
-  <li>Анкета — Telegram Mini App или отдельная веб-форма на поддомене?</li>
-  <li>Telegram-бот один или всё-таки два (клиентский + админский) — я за два, но это +1 токен и мелкие затраты на инфру</li>
-  <li>Hosting: Railway ($5) или self-host на VPS ($5) — зависит от того, есть ли у тебя VPS уже</li>
-  <li>Доменное имя — использовать поддомен бренда или отдельное?</li>
-  <li>Правовая часть — согласие на обработку ПД должно быть оформлено в TG Mini App или отдельно</li>
-  <li>Первичный импорт — выгрузка существующих клиентов из текущих чатов / таблиц в базу</li>
+  <li><b>WhatsApp-интеграция вычёркивается из фазы 3.</b> Экономим ~3–5 дней разработки и ~$30/мес на Green API.</li>
+  <li><b>Telegram Mini App</b> — добавляется модуль <code>app/miniapp/</code>: <code>anketa.html</code>, <code>consent.html</code>, <code>kabinet.html</code> (позже). Отдельный FastAPI роутер отдаёт страницы с <code>initData</code>-валидацией.</li>
+  <li><b>Domain setup</b> — как только домен куплен, прописываем DNS на Railway (CNAME), включаем SSL. Mini App требует https.</li>
+  <li><b>Админ-бот</b> — отдельный <code>BOT_TOKEN_ADMIN</code> в env, отдельный <code>supervisord</code>-процесс.</li>
+  <li><b>Правовая часть</b> — политика ПД хранится в <code>templates</code>, редактируется из админки, версионируется. Mini App подтягивает последнюю актуальную.</li>
+</ul>
+</div>
+
+<div class="card">
+<h4>Остаются открытыми</h4>
+<ul class="nodot">
+  <li>Точный бренд-нейм и ник клиентского бота в Telegram (зависит от домена)</li>
+  <li>Будут ли у центра дополнительные админы, кроме Маши и Агнии — нужно для ролей</li>
+  <li>Ставить ли бот в shadow mode на первые 1-2 недели (все реплики через одобрение Маши) — рекомендую</li>
+  <li>Нужен ли экспорт в Google Sheets Маши на старте или можно оставить только веб-админку</li>
 </ul>
 </div>
 
