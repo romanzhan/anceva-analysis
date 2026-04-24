@@ -1,0 +1,1436 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Технический проект · Anceva Bot</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root{
+    --bg:#f7f8fa;
+    --surface:#ffffff;
+    --ink:#1b1f24;
+    --ink-2:#434b55;
+    --muted:#747d88;
+    --line:#e4e7ec;
+    --line-2:#d7dbe0;
+    --accent:#4f6cff;
+    --accent-2:#3a52d6;
+    --accent-soft:#eef0ff;
+    --ok:#1f9254;
+    --ok-soft:#e4f3ea;
+    --warn:#c27a3b;
+    --warn-soft:#fbeedc;
+    --bad:#b5423c;
+    --bad-soft:#f8dedc;
+    --tint:#f0f2f5;
+    --tint-2:#f6f8fb;
+    --code-bg:#0f1419;
+    --code-ink:#e6e6e6;
+  }
+  *{box-sizing:border-box;min-width:0}
+  html,body{margin:0;padding:0;overflow-x:hidden;max-width:100%}
+  body{
+    background:var(--bg);color:var(--ink);
+    font:15.5px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,"Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    word-wrap:break-word;overflow-wrap:break-word;
+  }
+  img,svg{max-width:100%;height:auto}
+  a{color:var(--accent-2)}
+  ::selection{background:#d8dfff}
+
+  .wrap{max-width:1200px;margin:0 auto;padding:40px 26px 120px}
+  @media (max-width:640px){.wrap{padding:18px 14px 120px}}
+
+  /* HERO */
+  header.hero{
+    background:linear-gradient(135deg,#eef1ff 0%,#e2e7ff 100%);
+    border-radius:20px;padding:44px 44px;margin-bottom:32px;
+    border:1px solid var(--line);
+  }
+  @media (max-width:860px){header.hero{padding:28px 22px;border-radius:16px;margin-bottom:22px}}
+  .kicker{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent-2);font-weight:700;margin-bottom:14px}
+  header.hero h1{font-size:clamp(24px,4.4vw,40px);line-height:1.12;margin:0 0 14px;font-weight:700;letter-spacing:-.015em}
+  header.hero .lead{font-size:clamp(15px,1.8vw,17px);line-height:1.55;color:var(--ink-2);max-width:860px;margin:0}
+  header.hero .meta{display:flex;gap:12px 22px;flex-wrap:wrap;margin-top:18px;font-size:12.5px;color:var(--ink-2)}
+  header.hero .meta span{background:rgba(255,255,255,.7);padding:4px 10px;border-radius:6px;border:1px solid var(--line)}
+
+  /* TYPOGRAPHY */
+  h2{font-size:clamp(22px,3vw,28px);margin:48px 0 6px;font-weight:700;letter-spacing:-.01em;scroll-margin-top:80px}
+  @media (max-width:640px){h2{margin:36px 0 4px}}
+  h2 .num{display:inline-block;font-size:11px;letter-spacing:.22em;color:var(--accent-2);vertical-align:middle;
+    margin-right:10px;font-weight:700;background:var(--accent-soft);border-radius:6px;padding:4px 9px}
+  h3{font-size:clamp(17px,2.2vw,20px);margin:24px 0 10px;font-weight:600}
+  h4{font-size:14.5px;margin:16px 0 6px;font-weight:600;color:var(--ink-2);text-transform:uppercase;letter-spacing:.06em}
+  p{margin:0 0 12px}
+  .sub{color:var(--ink-2);margin:-2px 0 18px;font-size:15px;max-width:880px}
+
+  /* CARDS */
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin:12px 0;max-width:100%}
+  .card>*{max-width:100%}
+  .card.tint{background:var(--tint-2)}
+  .card.soft{background:var(--accent-soft);border-color:#cfd6ff}
+  @media (max-width:640px){.card{padding:18px 16px;border-radius:10px}}
+
+  /* GRIDS */
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  @media (max-width:1000px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:860px){.g3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+  @media (max-width:760px){.split{grid-template-columns:1fr}}
+
+  /* CODE */
+  pre{background:var(--code-bg);color:var(--code-ink);border-radius:10px;padding:16px 18px;overflow-x:auto;
+      font:13px/1.55 "JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;max-width:100%;white-space:pre}
+  @media (max-width:640px){pre{padding:12px;font-size:12px}}
+  code{background:var(--tint);padding:2px 6px;border-radius:4px;font-size:13px;
+       font-family:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;color:var(--accent-2)}
+  pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+
+  /* TABLES */
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px 0 18px;border-radius:10px;border:1px solid var(--line)}
+  .table-wrap table{margin:0;border:0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}
+  th{font-weight:600;color:var(--ink-2);background:var(--tint);font-size:12px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+  tr:hover td{background:var(--tint-2)}
+  @media (max-width:640px){th,td{padding:8px 10px;font-size:13px}th{white-space:normal}}
+
+  /* TAGS */
+  .tag{display:inline-block;padding:2px 9px;border-radius:4px;font-size:11.5px;font-weight:600;
+       background:var(--accent-soft);color:var(--accent-2);margin:1px 3px 1px 0;white-space:nowrap;letter-spacing:.02em}
+  .tag.ok{background:var(--ok-soft);color:var(--ok)}
+  .tag.warn{background:var(--warn-soft);color:var(--warn)}
+  .tag.bad{background:var(--bad-soft);color:var(--bad)}
+  .tag.mono{font-family:"JetBrains Mono",monospace;font-size:11px}
+
+  /* LISTS */
+  ul.clean{padding-left:20px;margin:6px 0 12px}
+  ul.clean li{margin:4px 0}
+  ul.nodot{list-style:none;padding:0;margin:6px 0}
+  ul.nodot li{padding-left:18px;position:relative;margin:5px 0}
+  ul.nodot li::before{content:"›";position:absolute;left:0;color:var(--accent);font-weight:700}
+
+  /* MERMAID */
+  .mermaid{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+  .mermaid svg{max-width:100%;height:auto!important}
+
+  /* CALLOUT */
+  .callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 10px 10px 0;margin:12px 0;font-size:14.5px}
+  .callout.ok{border-color:var(--ok);background:var(--ok-soft)}
+  .callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+  .callout.bad{border-color:var(--bad);background:var(--bad-soft)}
+  .callout strong{display:block;margin-bottom:2px;color:var(--ink)}
+
+  /* LAYOUT */
+  .layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:32px;align-items:start}
+  @media (max-width:960px){.layout{grid-template-columns:1fr;gap:14px}}
+
+  /* TOC */
+  .toc-desktop{position:sticky;top:16px;background:var(--surface);border:1px solid var(--line);
+    border-radius:12px;padding:16px 18px;font-size:13px;max-height:calc(100vh - 32px);overflow-y:auto}
+  .toc-desktop .tt{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-2);font-weight:700;margin-bottom:10px}
+  .toc-desktop a{display:block;padding:5px 0;color:var(--ink-2);text-decoration:none;line-height:1.35}
+  .toc-desktop a:hover{color:var(--accent-2)}
+  .toc-desktop a.active{color:var(--accent-2);font-weight:600}
+  @media (max-width:960px){.toc-desktop{display:none}}
+
+  /* BURGER */
+  .burger{position:fixed;bottom:22px;right:22px;z-index:50;width:54px;height:54px;border-radius:50%;
+    background:var(--accent-2);color:#fff;border:0;box-shadow:0 8px 24px rgba(58,82,214,.4);
+    display:none;align-items:center;justify-content:center;cursor:pointer;font-size:20px}
+  .burger:active{transform:scale(.94)}
+  @media (max-width:960px){.burger{display:flex}}
+  .burger .ico{display:block;width:20px;height:14px;position:relative}
+  .burger .ico::before,.burger .ico::after,.burger .ico span{
+    content:"";position:absolute;left:0;right:0;height:2px;background:#fff;border-radius:2px;transition:.2s}
+  .burger .ico::before{top:0}.burger .ico span{top:50%;margin-top:-1px}.burger .ico::after{bottom:0}
+  body.drawer-open .burger .ico::before{transform:translateY(6px) rotate(45deg)}
+  body.drawer-open .burger .ico::after{transform:translateY(-6px) rotate(-45deg)}
+  body.drawer-open .burger .ico span{opacity:0}
+
+  .drawer-backdrop{position:fixed;inset:0;background:rgba(15,20,25,.5);opacity:0;pointer-events:none;transition:.2s;z-index:40}
+  body.drawer-open .drawer-backdrop{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;top:0;bottom:0;right:0;width:min(320px,88vw);background:var(--surface);z-index:45;
+    transform:translateX(100%);transition:transform .25s cubic-bezier(.2,.7,.2,1);
+    box-shadow:-12px 0 30px rgba(0,0,0,.12);display:flex;flex-direction:column}
+  body.drawer-open .drawer{transform:translateX(0)}
+  .drawer .dh{padding:18px 20px 12px;border-bottom:1px solid var(--line)}
+  .drawer .dh .tt{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-2);font-weight:700;margin-bottom:4px}
+  .drawer .dh h4{margin:0;font-size:17px;color:var(--ink)}
+  .drawer .dbody{padding:6px 8px 20px;overflow-y:auto;flex:1}
+  .drawer a{display:block;padding:11px 12px;font-size:14.5px;color:var(--ink-2);text-decoration:none;border-radius:8px;line-height:1.3}
+  .drawer a:active,.drawer a.active{background:var(--tint);color:var(--accent-2);font-weight:600}
+  .drawer a .n{display:inline-block;width:22px;color:var(--accent);font-weight:700;font-size:11.5px}
+
+  /* MOCK UI */
+  .mock{background:#fff;border:1px solid var(--line-2);border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(15,20,25,.04);margin:12px 0}
+  .mock .topbar{background:#f4f6f9;border-bottom:1px solid var(--line);padding:10px 14px;font-size:12.5px;color:var(--ink-2);display:flex;gap:10px;align-items:center}
+  .mock .dots{display:flex;gap:5px}
+  .mock .dots i{width:10px;height:10px;border-radius:50%;background:#e3e6ea;display:block}
+  .mock .body{padding:14px 16px;font-size:13.5px}
+
+  /* TG CHAT MOCK */
+  .tg{background:#f0f2f5;padding:12px;border-radius:10px;margin:10px 0;border:1px solid var(--line)}
+  .tg .tg-msg{margin:4px 0;max-width:82%;padding:7px 11px;border-radius:12px;font-size:13.5px;line-height:1.45;white-space:pre-wrap}
+  .tg .tg-msg.in{background:#fff;border:1px solid var(--line-2);margin-right:auto;border-bottom-left-radius:4px}
+  .tg .tg-msg.out{background:#def0fc;margin-left:auto;border-bottom-right-radius:4px}
+  .tg .tg-btns{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0 10px;max-width:82%}
+  .tg .tg-btns.out{margin-left:auto;justify-content:flex-end}
+  .tg .tg-btn{background:#fff;border:1px solid #b8c5d6;color:var(--accent-2);padding:6px 12px;border-radius:8px;font-size:12.5px;font-weight:500;cursor:pointer}
+  .tg .tg-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .tg .tg-kbd{background:#fff;border-top:1px solid var(--line);margin:10px -12px -12px;padding:8px 10px;display:flex;flex-wrap:wrap;gap:6px}
+  .tg .tg-kbd .tg-key{background:#f4f6f9;border:1px solid var(--line);padding:6px 12px;border-radius:6px;font-size:12.5px;flex:1 1 auto;text-align:center;min-width:100px}
+
+  /* ADMIN MOCK */
+  .admin-mock{border:1px solid var(--line-2);border-radius:12px;overflow:hidden;background:#fff;margin:10px 0}
+  .admin-mock .am-head{background:#fafbfc;border-bottom:1px solid var(--line);padding:10px 14px;display:flex;align-items:center;gap:10px;font-size:13px}
+  .admin-mock .am-head .logo{font-weight:700;color:var(--accent-2)}
+  .admin-mock .am-head .nav{display:flex;gap:2px;flex-wrap:wrap}
+  .admin-mock .am-head .nav a{padding:6px 10px;border-radius:6px;font-size:12.5px;color:var(--ink-2);text-decoration:none}
+  .admin-mock .am-head .nav a.active{background:var(--accent-soft);color:var(--accent-2);font-weight:600}
+  .admin-mock .am-body{padding:16px 18px;font-size:13.5px;background:#fafbfc;min-height:140px}
+  .admin-mock .am-row{display:grid;grid-template-columns:140px 1fr auto;gap:14px;align-items:center;padding:10px;background:#fff;border:1px solid var(--line);border-radius:8px;margin:6px 0}
+  .admin-mock .am-row .who{font-weight:600}
+  .admin-mock .am-row .snippet{color:var(--muted);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .admin-mock .am-row .actions{display:flex;gap:4px}
+  .admin-mock .am-btn{background:#fff;border:1px solid var(--line-2);color:var(--ink-2);padding:5px 10px;border-radius:5px;font-size:12px;cursor:pointer}
+  .admin-mock .am-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .admin-mock .am-btn.ghost{background:transparent}
+
+  /* KPI */
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px}
+  .kpi .n{font-size:24px;font-weight:700;letter-spacing:-.015em;line-height:1.05}
+  .kpi .l{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.1em}
+  .kpi .c{font-size:12.5px;color:var(--ink-2);margin-top:8px;line-height:1.45}
+
+  /* STEPS */
+  .steps{counter-reset:s;list-style:none;padding:0;margin:14px 0}
+  .steps li{counter-increment:s;position:relative;padding:14px 16px 14px 52px;background:var(--surface);border:1px solid var(--line);border-radius:10px;margin:8px 0;font-size:14px}
+  .steps li::before{content:counter(s);position:absolute;left:14px;top:14px;width:26px;height:26px;border-radius:50%;
+    background:var(--accent-soft);color:var(--accent-2);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:12px}
+  .steps li b{display:block;margin-bottom:3px;font-size:14.5px}
+  .steps li .d{color:var(--ink-2);font-size:13.5px;line-height:1.5}
+
+  /* DETAILS */
+  details{border:1px solid var(--line);border-radius:10px;margin:8px 0;background:#fff;overflow:hidden}
+  details summary{padding:12px 16px;cursor:pointer;font-weight:600;list-style:none;background:var(--tint);font-size:14px}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"＋";float:right;color:var(--accent);font-weight:700}
+  details[open] summary::after{content:"−"}
+  details .inner{padding:14px 16px}
+
+  hr{border:0;border-top:1px solid var(--line);margin:32px 0}
+  footer{margin-top:60px;padding:24px 0;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+</style>
+</head>
+<body>
+
+<button class="burger" id="burger" aria-label="Открыть оглавление"><span class="ico"><span></span></span></button>
+<div class="drawer-backdrop" id="backdrop"></div>
+
+<aside class="drawer" id="drawer">
+  <div class="dh"><div class="tt">Оглавление</div><h4>Технический проект</h4></div>
+  <div class="dbody">
+    <a href="#overview"><span class="n">01</span>Обзор</a>
+    <a href="#stack"><span class="n">02</span>Стек и решения</a>
+    <a href="#arch"><span class="n">03</span>Архитектура</a>
+    <a href="#modules"><span class="n">04</span>Модули</a>
+    <a href="#db"><span class="n">05</span>Схема БД</a>
+    <a href="#fsm"><span class="n">06</span>Состояния диалога</a>
+    <a href="#lifecycle"><span class="n">07</span>Жизненный цикл</a>
+    <a href="#bot-ux"><span class="n">08</span>Бот: UX клиента</a>
+    <a href="#bot-buttons"><span class="n">09</span>Бот: команды и кнопки</a>
+    <a href="#admin-overview"><span class="n">10</span>Админка: обзор</a>
+    <a href="#admin-screens"><span class="n">11</span>Админка: экраны</a>
+    <a href="#admin-bot"><span class="n">12</span>Админ-бот</a>
+    <a href="#handoff"><span class="n">13</span>Хэндофф</a>
+    <a href="#media"><span class="n">14</span>Медиа</a>
+    <a href="#llm"><span class="n">15</span>LLM слой</a>
+    <a href="#scheduler"><span class="n">16</span>Планировщик</a>
+    <a href="#integrations"><span class="n">17</span>Интеграции</a>
+    <a href="#security"><span class="n">18</span>Безопасность</a>
+    <a href="#deploy"><span class="n">19</span>Деплой</a>
+    <a href="#phases"><span class="n">20</span>Этапы</a>
+    <a href="#risks"><span class="n">21</span>Риски и вопросы</a>
+  </div>
+</aside>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="kicker">Technical Design · Anceva Bot · v0.1</div>
+  <h1>Телеграм-бот для Центра Коррекции Речи — архитектура, UX, админка</h1>
+  <p class="lead">Сопровождающий документ к ANALYSIS.html. Описывает, как именно устроен бот изнутри, из чего состоит админка, какие кнопки видят клиент и администратор, как ведётся диалог, как передаётся человеку, как разворачивается и что считать. Дальше работаем по этому документу.</p>
+  <div class="meta">
+    <span>Python 3.12</span>
+    <span>aiogram 3</span>
+    <span>Gemini 2 Flash + Pro</span>
+    <span>SQLite → Postgres</span>
+    <span>FastAPI + htmx</span>
+    <span>Railway deploy</span>
+  </div>
+</header>
+
+<div class="layout">
+
+<aside class="toc-desktop">
+  <div class="tt">Содержание</div>
+  <a href="#overview">01. Обзор</a>
+  <a href="#stack">02. Стек и решения</a>
+  <a href="#arch">03. Архитектура</a>
+  <a href="#modules">04. Модули</a>
+  <a href="#db">05. Схема БД</a>
+  <a href="#fsm">06. Состояния диалога</a>
+  <a href="#lifecycle">07. Жизненный цикл</a>
+  <a href="#bot-ux">08. Бот: UX клиента</a>
+  <a href="#bot-buttons">09. Бот: команды и кнопки</a>
+  <a href="#admin-overview">10. Админка: обзор</a>
+  <a href="#admin-screens">11. Админка: экраны</a>
+  <a href="#admin-bot">12. Админ-бот</a>
+  <a href="#handoff">13. Хэндофф</a>
+  <a href="#media">14. Медиа</a>
+  <a href="#llm">15. LLM слой</a>
+  <a href="#scheduler">16. Планировщик</a>
+  <a href="#integrations">17. Интеграции</a>
+  <a href="#security">18. Безопасность</a>
+  <a href="#deploy">19. Деплой</a>
+  <a href="#phases">20. Этапы</a>
+  <a href="#risks">21. Риски и вопросы</a>
+</aside>
+
+<main>
+
+<!-- 01 OVERVIEW -->
+<h2 id="overview"><span class="num">01</span>Обзор системы</h2>
+<p class="sub">Что строим в одном абзаце и в одной картинке.</p>
+
+<div class="card">
+<p>Telegram-бот + веб-админка + (опционально) второй «пульт»-бот для админа в Telegram. LLM внутри — Gemini Flash для рабочего диалога, Gemini Pro на сложные ветви. БД хранит клиентов, детей, диалоги, сообщения, брони, оплаты, шаблоны, задачи. Планировщик гоняет напоминания и follow-up. Админка даёт веб-интерфейс для Маши и Агнии. Хэндофф «бот ↔ человек» — одной кнопкой в обе стороны.</p>
+</div>
+
+<div class="grid g4">
+  <div class="kpi"><div class="n">1</div><div class="l">клиентский бот</div><div class="c">принимает родителей в Telegram</div></div>
+  <div class="kpi"><div class="n">1</div><div class="l">веб-админка</div><div class="c">FastAPI + htmx</div></div>
+  <div class="kpi"><div class="n">1</div><div class="l">админ-бот</div><div class="c">мобильный «пульт» в Telegram</div></div>
+  <div class="kpi"><div class="n">~12</div><div class="l">таблиц БД</div><div class="c">core domain</div></div>
+</div>
+
+<!-- 02 STACK -->
+<h2 id="stack"><span class="num">02</span>Стек и ключевые решения</h2>
+
+<div class="card">
+<div class="table-wrap">
+<table>
+<tr><th>Слой</th><th>Что берём</th><th>Альтернатива</th><th>Почему так</th></tr>
+<tr><td>Язык</td><td><code>Python 3.12</code></td><td>Node.js, Go</td><td>быстрая разработка, лучшая экосистема под LLM и телегу</td></tr>
+<tr><td>Telegram</td><td><code>aiogram 3</code></td><td>python-telegram-bot, aiohttp</td><td>async, FSM, dispatcher из коробки, активная поддержка</td></tr>
+<tr><td>LLM</td><td><code>google-generativeai</code> + Flash / Pro</td><td>OpenAI</td><td>биллинг у заказчика, щедрый free tier, нативная мультимодалка</td></tr>
+<tr><td>БД (MVP)</td><td><code>SQLite</code> + WAL</td><td>сразу Postgres</td><td>ноль инфраструктуры на старте, легко бэкапить, миграция через Alembic</td></tr>
+<tr><td>БД (prod)</td><td><code>Postgres 16</code></td><td>—</td><td>при росте — нужны FTS, параллелизм, бэкапы</td></tr>
+<tr><td>ORM</td><td><code>SQLAlchemy 2</code> + <code>Alembic</code></td><td>peewee, raw SQL</td><td>стандарт, миграции, тайпы</td></tr>
+<tr><td>Pydantic</td><td><code>Pydantic v2</code></td><td>dataclasses</td><td>валидация + структурированный вывод LLM</td></tr>
+<tr><td>Админка backend</td><td><code>FastAPI</code></td><td>Flask, Django</td><td>async, тайпы, один язык с ботом</td></tr>
+<tr><td>Админка frontend</td><td><code>htmx</code> + <code>Tailwind</code> + <code>Alpine.js</code></td><td>React SPA</td><td>без сборки, быстро, один разработчик справляется</td></tr>
+<tr><td>Авторизация админа</td><td><code>Telegram Login Widget</code></td><td>email/password</td><td>админы уже в Telegram, нет паролей для утечки</td></tr>
+<tr><td>Фоновые задачи (MVP)</td><td><code>APScheduler</code> в том же процессе</td><td>Celery</td><td>на старте нагрузка мизерная</td></tr>
+<tr><td>Фоновые задачи (prod)</td><td><code>Celery</code> + <code>Redis</code></td><td>RQ, Dramatiq</td><td>при росте — надо отдельный воркер</td></tr>
+<tr><td>Хранение медиа</td><td><code>telegram file_id</code> + SQLite BLOB для мини-кэша</td><td>S3, локальный FS</td><td>Telegram хранит бесплатно, file_id вечный</td></tr>
+<tr><td>Деплой</td><td><code>Railway</code> (~$5/мес)</td><td>Fly.io, VPS</td><td>webhook держится 24/7, простой CI</td></tr>
+<tr><td>CI/CD</td><td><code>GitHub Actions</code></td><td>—</td><td>авто-деплой на push в main</td></tr>
+<tr><td>Ошибки</td><td><code>Sentry</code> (free tier)</td><td>—</td><td>без этого в проде не выжить</td></tr>
+<tr><td>Логи</td><td><code>structlog</code> в stdout</td><td>ELK</td><td>Railway пишет stdout в свою консоль</td></tr>
+<tr><td>Форматтер</td><td><code>ruff</code> + <code>black</code></td><td>—</td><td>стандарт 2026</td></tr>
+<tr><td>Тесты</td><td><code>pytest</code> + <code>pytest-asyncio</code></td><td>—</td><td>стандарт</td></tr>
+</table>
+</div>
+</div>
+
+<div class="callout"><strong>Render не берём</strong>
+На бесплатном тарифе засыпает через 15 мин бездействия. Для Telegram-webhook это смертельно. Railway / Fly.io держат контейнер 24/7 за ~$5/мес.</div>
+
+<!-- 03 ARCH -->
+<h2 id="arch"><span class="num">03</span>Архитектура</h2>
+<p class="sub">Какие процессы крутятся и как они общаются.</p>
+
+<div class="mermaid">
+flowchart LR
+  TG[Telegram API] -- webhook --> BOT[Bot Process<br/>aiogram + handlers]
+  TG -.- ABOT[Admin Bot Process<br/>aiogram pull]
+  ADMIN[Admin Browser] -- HTTPS --> WEB[FastAPI<br/>admin backend]
+  BOT --> DB[(SQLite / Postgres)]
+  ABOT --> DB
+  WEB --> DB
+  BOT --> LLM[Gemini API<br/>Flash + Pro]
+  BOT --> TG
+  ABOT --> TG
+  WEB --> TG
+  SCH[Scheduler<br/>APScheduler] --> DB
+  SCH --> TG
+  SCH --> BOT
+  TG -.media.-> BOT
+  BOT --> SENTRY[Sentry]
+  WEB --> SENTRY
+
+  classDef svc fill:#eef0ff,stroke:#3a52d6,color:#1b1f24
+  classDef ext fill:#fff,stroke:#747d88,color:#1b1f24
+  classDef store fill:#e4f3ea,stroke:#1f9254,color:#1b1f24
+  class BOT,ABOT,WEB,SCH svc
+  class TG,LLM,SENTRY ext
+  class DB store
+</div>
+
+<div class="grid g2">
+<div class="card"><h4>Процессы</h4>
+<ul class="nodot">
+  <li><code>bot</code> — клиентский бот, webhook-ом принимает апдейты Telegram, общается с Gemini</li>
+  <li><code>admin_bot</code> — внутренний бот для Маши/Агнии, long-polling в параллельном процессе</li>
+  <li><code>web</code> — FastAPI, отдаёт админку, дёргает те же сервисы</li>
+  <li><code>scheduler</code> — один процесс APScheduler, запускает follow-up, напоминания, триггеры</li>
+</ul>
+<p style="margin-top:8px;color:var(--ink-2);font-size:13.5px">На MVP все четыре живут в одном Railway-контейнере через <code>supervisord</code> или <code>honcho</code>. При росте — разнесём.</p>
+</div>
+<div class="card"><h4>Общие модули</h4>
+<ul class="nodot">
+  <li><code>domain/</code> — Pydantic-модели, бизнес-правила (цены, перерасчёты, статусы)</li>
+  <li><code>db/</code> — SQLAlchemy модели + Alembic миграции</li>
+  <li><code>llm/</code> — обёртка Gemini, промты, structured output</li>
+  <li><code>dialog/</code> — FSM, роутер по состояниям, сборка промта</li>
+  <li><code>templates/</code> — хранимые тексты из чек-листа</li>
+  <li><code>integrations/</code> — Kaspi, Calendar (позже)</li>
+  <li><code>common/</code> — логгер, конфиг, ошибки</li>
+</ul>
+</div>
+</div>
+
+<!-- 04 MODULES -->
+<h2 id="modules"><span class="num">04</span>Модули и файловая структура</h2>
+
+<pre><code>anceva_bot/
+├─ app/
+│  ├─ bot/
+│  │  ├─ __init__.py
+│  │  ├─ main.py               # запуск клиентского бота
+│  │  ├─ handlers/
+│  │  │  ├─ start.py            # /start, онбординг
+│  │  │  ├─ dialog.py           # основной поток текстовых сообщений
+│  │  │  ├─ media.py            # голосовые, фото, видео, документы
+│  │  │  ├─ callbacks.py        # inline-кнопки (перенос, подтверждение, оплата)
+│  │  │  ├─ commands.py         # /cancel, /admin, /menu
+│  │  │  └─ payment.py          # приём чека Kaspi
+│  │  └─ middlewares/
+│  │     ├─ throttle.py         # rate limit
+│  │     ├─ client_ctx.py       # подгрузка client из БД
+│  │     └─ admin_mode.py       # если mode=admin — не отвечаем, только сохраняем
+│  │
+│  ├─ admin_bot/
+│  │  ├─ main.py
+│  │  └─ handlers/              # уведомления о хэндоффе, /сегодня, /завтра и т.д.
+│  │
+│  ├─ web/
+│  │  ├─ main.py                # FastAPI приложение
+│  │  ├─ routers/
+│  │  │  ├─ auth.py             # Telegram Login
+│  │  │  ├─ dashboard.py
+│  │  │  ├─ inbox.py
+│  │  │  ├─ clients.py
+│  │  │  ├─ schedule.py
+│  │  │  ├─ payments.py
+│  │  │  ├─ broadcasts.py
+│  │  │  ├─ templates.py
+│  │  │  └─ settings.py
+│  │  ├─ templates/             # Jinja2 шаблоны (htmx)
+│  │  └─ static/                # Tailwind output, немного JS
+│  │
+│  ├─ dialog/
+│  │  ├─ states.py              # enum состояний FSM
+│  │  ├─ router.py              # выбирает handler по state
+│  │  ├─ tree.py                # дерево сценариев по возрасту
+│  │  ├─ extractor.py           # Gemini structured output → dict
+│  │  └─ escalation.py          # правила эскалации админу
+│  │
+│  ├─ llm/
+│  │  ├─ client.py              # обёртка google-generativeai
+│  │  ├─ prompts/               # системные промты, шаблоны
+│  │  │  ├─ master.md
+│  │  │  ├─ by_direction/
+│  │  │  └─ extract_schema.py
+│  │  └─ multimodal.py          # обработка audio/image/video
+│  │
+│  ├─ domain/
+│  │  ├─ models.py              # Pydantic: Client, Child, Dialog, Message
+│  │  ├─ pricing.py             # расчёт стоимости, перерасчёты
+│  │  ├─ calendar.py            # слоты, окна специалистов
+│  │  └─ rules.py               # бизнес-правила (1 перенос бесплатно и т.п.)
+│  │
+│  ├─ db/
+│  │  ├─ models.py              # SQLAlchemy
+│  │  ├─ session.py
+│  │  └─ repositories/          # доступ к данным по сущностям
+│  │
+│  ├─ scheduler/
+│  │  ├─ main.py                # APScheduler loop
+│  │  └─ jobs/
+│  │     ├─ reminders.py        # за 24ч до занятия
+│  │     ├─ followup.py         # 24/48/7 дней молчания
+│  │     ├─ monthly_invoices.py # 1 число — счета
+│  │     └─ seasonal.py         # ДР, 8 марта, Наурыз
+│  │
+│  ├─ integrations/
+│  │  ├─ kaspi.py               # ссылка, парсинг чека
+│  │  └─ calendar.py            # Google Calendar (позже)
+│  │
+│  └─ common/
+│     ├─ config.py              # pydantic-settings из .env
+│     ├─ logger.py              # structlog
+│     └─ errors.py
+│
+├─ migrations/                  # Alembic
+├─ tests/
+├─ scripts/                     # одноразовые утилиты
+├─ pyproject.toml
+├─ .env.example
+├─ Procfile                     # web, bot, admin_bot, scheduler
+└─ README.md</code></pre>
+
+<!-- 05 DB -->
+<h2 id="db"><span class="num">05</span>Схема БД</h2>
+
+<div class="mermaid">
+erDiagram
+  CLIENTS ||--o{ CHILDREN : "у родителя"
+  CLIENTS ||--o{ DIALOGS : "ведёт"
+  CLIENTS ||--o{ PAYMENTS : "платит"
+  DIALOGS ||--|{ MESSAGES : "состоит из"
+  CHILDREN ||--o{ DIAGNOSTICS : "проходит"
+  CHILDREN ||--o{ LESSONS : "посещает"
+  CHILDREN ||--o| ANKETAS : "заполнена 1 раз"
+  SPECIALISTS ||--o{ LESSONS : "ведёт"
+  SPECIALISTS ||--o{ DIAGNOSTICS : "проводит"
+  ADMINS ||--o{ DIALOGS : "берёт"
+  TASKS }o--|| CLIENTS : "на клиента"
+  TEMPLATES ||--o{ MESSAGES : "шаблон"
+</div>
+
+<div class="card">
+<h4>Основные таблицы</h4>
+<div class="table-wrap">
+<table>
+<tr><th>Таблица</th><th>Ключевые поля</th><th>Назначение</th></tr>
+<tr><td><code>clients</code></td><td>id, tg_user_id, phone, name, source, state, locale, referrer_client_id, created_at, last_seen_at</td><td>родитель или подросток</td></tr>
+<tr><td><code>children</code></td><td>id, client_id, full_name, dob, gender, home_language, main_direction, assigned_specialist_id, status</td><td>отдельно от клиента — у одной мамы может быть двое</td></tr>
+<tr><td><code>anketas</code></td><td>child_id, filled_at, answers JSON, videos[], docs[]</td><td>заполняется 1 раз перед ДИ</td></tr>
+<tr><td><code>dialogs</code></td><td>id, client_id, started_at, mode (bot/admin), taken_by_admin_id, taken_at, gemini_context JSON, current_state</td><td>один родитель = один долгий диалог</td></tr>
+<tr><td><code>messages</code></td><td>id, dialog_id, direction, sender, tg_message_id, type, content, media_file_id, media_transcript, extracted JSON, created_at</td><td>каждое сообщение в обе стороны</td></tr>
+<tr><td><code>diagnostics</code></td><td>id, child_id, scheduled_at, specialist_id, status, price, payment_status, anketa_received, videos_received, result_note</td><td>ДИ — разовое событие</td></tr>
+<tr><td><code>lessons</code></td><td>id, child_id, scheduled_at, specialist_id, room, duration_min, price, status</td><td>регулярные занятия</td></tr>
+<tr><td><code>payments</code></td><td>id, client_id, child_id, period (YYYY-MM), amount, method (cash/kaspi), status, kaspi_check_file_id, paid_at</td><td>месячные счета + чеки</td></tr>
+<tr><td><code>specialists</code></td><td>id, name, directions[], language, timetable, active</td><td>педагоги центра</td></tr>
+<tr><td><code>admins</code></td><td>id, tg_user_id, name, role (owner/admin/specialist), permissions</td><td>кто имеет доступ</td></tr>
+<tr><td><code>tasks</code></td><td>id, client_id, fire_at, kind, payload JSON, status, done_at</td><td>очередь follow-up, напоминаний, триггеров</td></tr>
+<tr><td><code>templates</code></td><td>id, slug, title, body, placeholders[], category</td><td>тексты из чек-листа, редактируемые из админки</td></tr>
+<tr><td><code>broadcasts</code></td><td>id, created_by, segment_filter JSON, body, status, stats</td><td>массовые рассылки</td></tr>
+<tr><td><code>audit_log</code></td><td>id, admin_id, action, payload, at</td><td>что админ сделал и когда</td></tr>
+<tr><td><code>price_tiers</code></td><td>id, direction, format, duration, per_week, price, valid_from, valid_to</td><td>версионный прайс</td></tr>
+</table>
+</div>
+</div>
+
+<div class="callout warn"><strong>Важно</strong>
+<code>children</code> — отдельно от <code>clients</code>, потому что у одной мамы часто двое-трое детей ходят (Бейсембековы, Бутовы, Гимазетдиновы в корпусе). И наоборот — за одного ребёнка в чат пишут и мама, и бабушка, и муж. Один ребёнок = одна карточка, родителей может быть несколько.</div>
+
+<!-- 06 FSM -->
+<h2 id="fsm"><span class="num">06</span>Состояния диалога (FSM)</h2>
+<p class="sub">На уровне высокого state machine. Внутри — LLM генерирует реплики, но роутер знает, где мы в воронке.</p>
+
+<div class="mermaid">
+stateDiagram-v2
+  [*] --> greeting
+  greeting --> got_parent_name: имя получено
+  got_parent_name --> got_age: возраст
+  got_age --> branching
+  branching --> collecting: ветка выбрана
+  collecting --> presenting_di: собрано достаточно
+  presenting_di --> picking_slot: родитель согласен
+  picking_slot --> getting_child_info
+  getting_child_info --> invoicing
+  invoicing --> awaiting_check
+  awaiting_check --> booked: чек принят
+  booked --> sent_anketa
+  sent_anketa --> anketa_filled: форма получена
+  anketa_filled --> pre_reminder
+  pre_reminder --> di_done: ДИ прошла
+  di_done --> active: начал ходить
+  active --> paused: болезнь/отпуск
+  paused --> active
+  active --> lost: 30 дней молчания
+  lost --> returning: сам написал
+  returning --> active
+  branching --> escalated: сложный диагноз
+  collecting --> escalated: эмоциональный кризис
+  awaiting_check --> escalated: оплата не пришла 48ч
+  escalated --> admin_mode
+  admin_mode --> any_state: админ отпустил
+</div>
+
+<div class="card">
+<h4>Переходы — как триггерятся</h4>
+<ul class="nodot">
+  <li><b>По событию от пользователя</b> — пришло сообщение, нажата кнопка</li>
+  <li><b>По таймеру</b> — scheduler тикает, проверяет условия, переводит состояние</li>
+  <li><b>По админу</b> — админ взял диалог / отпустил / пометил «закрыть»</li>
+  <li><b>По правилу LLM</b> — Gemini возвращает <code>next_state</code> в structured output, роутер переводит</li>
+</ul>
+</div>
+
+<!-- 07 LIFECYCLE -->
+<h2 id="lifecycle"><span class="num">07</span>Жизненный цикл одного сообщения</h2>
+
+<ol class="steps">
+<li><b>Telegram webhook прилетел в bot</b><span class="d">Update попал в aiogram dispatcher, middlewares подтянули <code>client</code>, <code>dialog</code> из БД</span></li>
+<li><b>Проверка режима диалога</b><span class="d">Если <code>dialog.mode = admin</code> — сохраняем сообщение в БД, <b>не</b> вызываем LLM, пушим уведомление админу</span></li>
+<li><b>Media → транскрипт</b><span class="d">Если голос/фото/видео — вызов Gemini multimodal, результат кладём в <code>message.media_transcript</code></span></li>
+<li><b>Сбор контекста</b><span class="d">Берём последние N сообщений диалога + карточку клиента + дерево состояний → формируем prompt</span></li>
+<li><b>Вызов Gemini</b><span class="d">Flash в 95% случаев; Pro — если сложная ветвь (заикание, ДЦП, аутизм). Structured output: <code>{reply, extracted, next_state, escalate, confidence}</code></span></li>
+<li><b>Проверка эскалации</b><span class="d">Если <code>escalate=true</code> или сработало регулярное правило — меняем mode на admin, шлём карточку в админ-бот, отвечаем клиенту заглушкой «передаю специалисту»</span></li>
+<li><b>Сохранение извлечённых данных</b><span class="d">Parent name / age / direction / concerns записываются в <code>children</code>, <code>clients</code>, <code>dialogs.gemini_context</code></span></li>
+<li><b>Отправка ответа</b><span class="d">LLM-реплика (1-3 коротких сообщения), при необходимости inline-кнопки (слоты, «оплатить», «подтвердить»)</span></li>
+<li><b>Обновление состояния</b><span class="d"><code>dialog.current_state = next_state</code>; при смене — триггер задач для планировщика (напоминание, follow-up)</span></li>
+<li><b>Аудит</b><span class="d">message saved, structlog пишет в stdout, при ошибке — Sentry</span></li>
+</ol>
+
+<!-- 08 BOT UX -->
+<h2 id="bot-ux"><span class="num">08</span>Бот со стороны клиента — что он видит</h2>
+
+<div class="card">
+<h3 style="margin-top:0">Первый вход · <code>/start</code></h3>
+<div class="tg">
+  <div class="tg-msg in">Центр Коррекции Речи Марии Анцевой приветствует Вас 🌿
+
+Я виртуальный помощник. Помогу записать ребёнка на диагностику, подобрать формат занятий и ответить на вопросы.
+
+Подскажите, как к Вам обращаться?</div>
+  <div class="tg-btns"><button class="tg-btn">Я родитель</button><button class="tg-btn">Я пишу о себе (14-16 лет)</button></div>
+</div>
+<p style="color:var(--ink-2);font-size:13.5px">Inline-кнопки дают быстрый путь в нужную ветку. Если родитель проигнорирует и напишет просто «Здравствуйте, сыну 2 года не говорит» — бот всё равно поймёт и пойдёт дальше по стандартной ветке.</p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">Подбор слота</h3>
+<div class="tg">
+  <div class="tg-msg in">Айгерим, подобрал для вас ближайшие окна для диагностики. Выберите удобное:</div>
+  <div class="tg-btns">
+    <button class="tg-btn primary">Чт, 25.04 · 10:30</button>
+    <button class="tg-btn">Пн, 29.04 · 09:00</button>
+    <button class="tg-btn">Ср, 01.05 · 10:30</button>
+  </div>
+  <div class="tg-btns"><button class="tg-btn">Другие даты</button></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">Оплата и бронь</h3>
+<div class="tg">
+  <div class="tg-msg in">Чтобы закрепить время за вами, нужна предоплата по Kaspi. Сумма: 9 000 ₸</div>
+  <div class="tg-btns">
+    <button class="tg-btn primary">🔗 Перейти к оплате</button>
+    <button class="tg-btn">Прислать чек</button>
+  </div>
+  <div class="tg-msg out">[отправлено фото чека]</div>
+  <div class="tg-msg in">Благодарим! Оплата получена, бронь закреплена 🌿
+
+Наш адрес: Ерубаева 68/2, 3 этаж, 301 кабинет
+Ссылка на 2ГИС</div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">Анкета через Telegram Mini App</h3>
+<div class="tg">
+  <div class="tg-msg in">Имя, ещё один важный этап — анкета ребёнка. Заполняется в одном окне, 5-7 минут. Нужна к четвергу, до 10:30.</div>
+  <div class="tg-btns"><button class="tg-btn primary">Открыть анкету</button></div>
+</div>
+<p style="color:var(--ink-2);font-size:13.5px">Кнопка открывает Telegram Web App — форма прямо внутри мессенджера. После заполнения бот получает JSON и пишет «спасибо, данные получены». Попутно в форме — загрузка видео и фото заключений.</p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">Меню активного клиента</h3>
+<p>Когда ребёнок уже ходит, у клиента в боте появляется persistent menu с основными действиями. Доступно в любое время через кнопку меню Telegram:</p>
+<div class="tg">
+  <div class="tg-msg in">📅 Занятие завтра в 14:30. Подтвердите, пожалуйста.</div>
+  <div class="tg-btns">
+    <button class="tg-btn primary">Буду</button>
+    <button class="tg-btn">Не смогу</button>
+    <button class="tg-btn">Опоздаю</button>
+  </div>
+  <div class="tg-kbd">
+    <span class="tg-key">📅 Расписание</span>
+    <span class="tg-key">💳 Оплаты</span>
+    <span class="tg-key">📝 Перенести</span>
+    <span class="tg-key">👤 Позвать админа</span>
+  </div>
+</div>
+</div>
+
+<!-- 09 BOT BUTTONS -->
+<h2 id="bot-buttons"><span class="num">09</span>Команды и кнопки бота</h2>
+
+<div class="split">
+<div class="card">
+<h4>Команды (slash)</h4>
+<div class="table-wrap">
+<table>
+<tr><th>Команда</th><th>Что делает</th></tr>
+<tr><td><code>/start</code></td><td>Старт или перезапуск диалога; онбординг</td></tr>
+<tr><td><code>/menu</code></td><td>Показать клавиатуру действий</td></tr>
+<tr><td><code>/admin</code></td><td>«Позвать живого администратора» — эскалация</td></tr>
+<tr><td><code>/schedule</code></td><td>Показать график занятий ребёнка</td></tr>
+<tr><td><code>/payment</code></td><td>Текущий счёт и история</td></tr>
+<tr><td><code>/cancel</code></td><td>Отменить текущее действие (например, заполнение анкеты)</td></tr>
+<tr><td><code>/help</code></td><td>Короткая справка</td></tr>
+</table>
+</div>
+</div>
+
+<div class="card">
+<h4>Inline-кнопки (по ходу диалога)</h4>
+<div class="table-wrap">
+<table>
+<tr><th>Контекст</th><th>Кнопки</th></tr>
+<tr><td>Старт</td><td>Я родитель · Я подросток</td></tr>
+<tr><td>Выбор слота</td><td>3 даты + «Другие варианты»</td></tr>
+<tr><td>Оплата</td><td>Перейти к Kaspi · Прислать чек</td></tr>
+<tr><td>Анкета</td><td>Открыть анкету (Mini App)</td></tr>
+<tr><td>Напоминание о занятии</td><td>Буду · Не смогу · Опоздаю на N мин</td></tr>
+<tr><td>Перенос</td><td>Дни недели · Отмена</td></tr>
+<tr><td>Прощание/отказ</td><td>Напишите, как будет возможность 🌿 · Позвать админа</td></tr>
+</table>
+</div>
+</div>
+</div>
+
+<div class="card">
+<h4>Persistent reply keyboard — активные клиенты</h4>
+<pre><code>┌──────────────┬──────────────┐
+│ 📅 Расписание │ 💳 Оплаты    │
+├──────────────┼──────────────┤
+│ 📝 Перенести  │ ❓ Вопрос    │
+├──────────────┴──────────────┤
+│ 👤 Позвать администратора   │
+└─────────────────────────────┘</code></pre>
+<p>Эта клавиатура появляется после завершения онбординга и первой оплаты. Новым клиентам на этапе квалификации — не показываем, чтобы не отвлекать.</p>
+</div>
+
+<!-- 10 ADMIN OVERVIEW -->
+<h2 id="admin-overview"><span class="num">10</span>Админка — общий взгляд</h2>
+<p class="sub">Веб-панель на FastAPI + htmx. Работает в любом браузере, включая мобильный. Авторизация через Telegram Login Widget — один клик, без паролей.</p>
+
+<div class="card">
+<h4>Принципы</h4>
+<ul class="nodot">
+  <li><b>Одно окно</b> — admin не переключается между чатами WhatsApp, Google Sheets и тетрадкой. Всё здесь</li>
+  <li><b>Любая операция — один клик</b> — выставить счёт, перенести, отправить напоминание, забрать диалог у бота</li>
+  <li><b>Оптимизировано под мобильный</b> — Маша смотрит с телефона. Экран — адаптив от 320px</li>
+  <li><b>Не заставляем набирать текст зря</b> — шаблоны, автозаполнение, reply-с-подсказкой</li>
+  <li><b>Аудит всего</b> — кто что сделал и когда. Роли: owner, admin, specialist (видит только своих)</li>
+</ul>
+</div>
+
+<div class="admin-mock">
+  <div class="am-head">
+    <span class="logo">anceva.admin</span>
+    <div class="nav">
+      <a class="active">Dashboard</a>
+      <a>Inbox</a>
+      <a>Клиенты</a>
+      <a>Расписание</a>
+      <a>Оплаты</a>
+      <a>Рассылки</a>
+      <a>Шаблоны</a>
+      <a>Настройки</a>
+    </div>
+  </div>
+  <div class="am-body">
+    <div style="color:var(--muted);font-size:12px;margin-bottom:10px;letter-spacing:.1em;text-transform:uppercase">Верхняя навигация — одинакова на всех экранах</div>
+  </div>
+</div>
+
+<!-- 11 ADMIN SCREENS -->
+<h2 id="admin-screens"><span class="num">11</span>Экраны админки — по каждому</h2>
+
+<h3>11.1 Dashboard</h3>
+<div class="admin-mock">
+  <div class="am-head"><span class="logo">anceva.admin</span><div class="nav"><a class="active">Dashboard</a><a>Inbox</a><a>Клиенты</a><a>Расписание</a><a>Оплаты</a></div></div>
+  <div class="am-body">
+    <div class="grid g4" style="gap:10px">
+      <div class="kpi"><div class="n">4</div><div class="l">Новые заявки</div><div class="c">сегодня</div></div>
+      <div class="kpi"><div class="n">7</div><div class="l">В работе</div><div class="c">ждут ответа</div></div>
+      <div class="kpi"><div class="n">3</div><div class="l">Диагностики</div><div class="c">завтра</div></div>
+      <div class="kpi"><div class="n">2</div><div class="l">Эскалации</div><div class="c">нужно внимание</div></div>
+    </div>
+    <div style="margin-top:14px;color:var(--muted);font-size:12px;letter-spacing:.1em;text-transform:uppercase">Ниже — лента эскалаций, сегодняшние занятия, просроченные оплаты</div>
+  </div>
+</div>
+<ul class="clean">
+  <li>KPI сверху: заявки сегодня, в работе, диагностики завтра, эскалации, оплаты просроченные, загрузка специалистов</li>
+  <li>Лента событий (реалтайм через htmx-SSE): «+ новая заявка», «+ оплата получена», «! эскалация»</li>
+  <li>Быстрые действия: «Рассылка сегодня», «Добавить клиента вручную», «Открыть Inbox»</li>
+</ul>
+
+<h3>11.2 Inbox — чаты</h3>
+<div class="admin-mock">
+  <div class="am-head"><span class="logo">anceva.admin</span><div class="nav"><a>Dashboard</a><a class="active">Inbox</a><a>Клиенты</a></div></div>
+  <div class="am-body">
+    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+      <button class="am-btn primary">Все</button>
+      <button class="am-btn">Новые</button>
+      <button class="am-btn">Без ответа 24ч</button>
+      <button class="am-btn">Эскалированные</button>
+      <button class="am-btn">Мои</button>
+      <button class="am-btn ghost">🔍 Поиск</button>
+    </div>
+    <div class="am-row"><div class="who">Айгерим</div><div class="snippet">Здравствуйте, сыну 1,8…</div><div class="actions"><button class="am-btn">Открыть</button><button class="am-btn primary">Взять</button></div></div>
+    <div class="am-row" style="background:var(--warn-soft)"><div class="who">Гульзира ⚠</div><div class="snippet">Эскалация: сложный запрос</div><div class="actions"><button class="am-btn">Открыть</button><button class="am-btn primary">Взять</button></div></div>
+    <div class="am-row"><div class="who">Татьяна</div><div class="snippet">Мария Сергеевна, это мама Миланы…</div><div class="actions"><button class="am-btn">Открыть</button><button class="am-btn primary">Взять</button></div></div>
+  </div>
+</div>
+<div class="grid g2">
+<div class="card"><h4>Фильтры</h4>
+<ul class="clean">
+  <li>Все / Новые / Без ответа / Эскалированные / Мои / Возвращенцы / Спящие</li>
+  <li>По направлению (логопед, дефектолог, ПШ, М+М, АФК)</li>
+  <li>По специалисту</li>
+  <li>Поиск по имени и телефону</li>
+</ul>
+</div>
+<div class="card"><h4>Кнопки в строке</h4>
+<ul class="clean">
+  <li><b>Открыть</b> — переход к диалогу (view-only, бот продолжает)</li>
+  <li><b>Взять</b> — хэндофф, mode=admin, бот замолкает</li>
+  <li><b>Пометить спамом</b> — скрыть из inbox</li>
+  <li><b>Быстрый ответ</b> — inline, без перехода</li>
+</ul>
+</div>
+</div>
+
+<h3>11.3 Экран одного чата</h3>
+<div class="admin-mock">
+  <div class="am-head"><span class="logo">anceva.admin</span><div class="nav"><a class="active">Чат: Айгерим</a></div></div>
+  <div class="am-body">
+    <div style="display:grid;grid-template-columns:1fr 220px;gap:12px">
+      <div style="background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px;min-height:160px">
+        <div style="color:var(--muted);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Лента сообщений · mode: bot 🤖</div>
+        <div style="font-size:12.5px;color:var(--ink-2)">[здесь переписка клиент ↔ бот, прокрутка, медиа с превью]</div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px">
+        <div style="font-weight:700;font-size:13px">Айгерим</div>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:2px">Ребёнок: Имат, 1,8</div>
+        <div style="font-size:11.5px;color:var(--muted)">Запрос: запуск речи</div>
+        <div style="font-size:11.5px;color:var(--muted)">Стадия: picking_slot</div>
+        <button class="am-btn primary" style="margin-top:8px;width:100%">Взять диалог</button>
+        <button class="am-btn" style="margin-top:4px;width:100%">Карточка ребёнка</button>
+      </div>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+      <button class="am-btn">📋 Шаблон</button>
+      <button class="am-btn">💳 Выставить счёт</button>
+      <button class="am-btn">📅 Предложить слот</button>
+      <button class="am-btn">📝 Открыть анкету</button>
+      <button class="am-btn ghost">📎 Медиа</button>
+    </div>
+  </div>
+</div>
+<ul class="clean">
+  <li>Лента сообщений слева, карточка клиента справа (имя, ребёнок, запрос, стадия, история)</li>
+  <li>Кнопка «Взять диалог» — одна, большая, видно сразу</li>
+  <li>Быстрые действия: шаблон, счёт, слот, открыть анкету</li>
+  <li>Внизу — поле ввода; при mode=bot подсказка «это уйдёт от имени бота». Опционально — «сначала забрать диалог»</li>
+  <li>Клавиши <kbd>/</kbd> — вставить шаблон, <kbd>Shift+Enter</kbd> — новая строка, <kbd>Enter</kbd> — отправить</li>
+</ul>
+
+<h3>11.4 Клиенты</h3>
+<ul class="clean">
+  <li>Таблица всех клиентов/детей с фильтром и поиском</li>
+  <li>Статусы: новый · запись · активный · пауза · спящий · возвращенец · отток</li>
+  <li>Клик по строке — карточка: анкета, специалист, расписание, оплаты, история диалога, медиа</li>
+  <li>Кнопки: «Написать», «Сменить специалиста», «Сменить время», «Поставить на паузу», «Архивировать»</li>
+</ul>
+
+<h3>11.5 Расписание</h3>
+<ul class="clean">
+  <li>Календарь по неделе × специалистам; drag-and-drop для переноса</li>
+  <li>Фильтры: по специалисту, по кабинету, по направлению</li>
+  <li>Клик по слоту — детали занятия/диагностики; кнопки «Перенести», «Отменить», «Написать родителю»</li>
+  <li>Кнопка «Предложить слот» — генерирует список свободных окон для конкретного ребёнка и шлёт через бота</li>
+</ul>
+
+<h3>11.6 Оплаты</h3>
+<ul class="clean">
+  <li>Календарь месяца: план, факт, задолженность</li>
+  <li>Кнопка «Сформировать счета на {месяц}» — генерирует по всем активным клиентам (с учётом перерасчётов, правил) и показывает preview</li>
+  <li>Каждый счёт — «Отправить» / «Править сумму» / «Добавить комментарий»</li>
+  <li>Приём чека — автоматически матчится по сумме и периоду; если не матчится — попадает в «требует ручного»</li>
+  <li>Напоминания: неоплатившим 5 числа автоматом уходит шаблон; 7 числа — повторно; 10 — эскалация админу</li>
+</ul>
+
+<h3>11.7 Рассылки</h3>
+<ul class="clean">
+  <li>Сегменты: все активные · ПШ · М+М · индивидуальные · спящие 30+ · возвращенцы</li>
+  <li>Шаблон текста + предпросмотр на тестовом чате</li>
+  <li>Кнопка «Отправить» — двойное подтверждение, аудит</li>
+  <li>Статистика: доставлено / прочитано / ответили</li>
+  <li>Готовые сценарии: «Утренник», «Смена расписания», «8 марта», «Наурыз», «Изменение прайса»</li>
+</ul>
+
+<h3>11.8 Шаблоны</h3>
+<ul class="clean">
+  <li>Все тексты из чек-листа — редактируемые (приветствие, описание ДИ по направлениям, правила переноса, прайс, оплата, анкета-напоминание)</li>
+  <li>Placeholders: <code>{parent_name}</code>, <code>{child_name}</code>, <code>{slot}</code>, <code>{amount}</code></li>
+  <li>Версионность — откат к предыдущей версии</li>
+  <li>Тестовая отправка себе в Telegram</li>
+</ul>
+
+<h3>11.9 Настройки</h3>
+<ul class="clean">
+  <li>Специалисты — карточки, активность, расписание, направления, язык</li>
+  <li>Прайс — таблица с действующими тарифами, возможность «с {дата} новый тариф»</li>
+  <li>Правила — сроки переноса, отработок, перерасчёта (меняется редко, но должно быть в UI)</li>
+  <li>Роли и доступы — добавить админа, дать/снять права</li>
+  <li>Интеграции — ключи Gemini, Kaspi-ссылка, webhook url</li>
+</ul>
+
+<!-- 12 ADMIN BOT -->
+<h2 id="admin-bot"><span class="num">12</span>Админ-бот — пульт в кармане</h2>
+<p class="sub">Отдельный Telegram-бот для Маши и Агнии. Не веб-админка, а быстрые операции с телефона без захода в браузер.</p>
+
+<div class="card">
+<h4>Задачи</h4>
+<ul class="clean">
+  <li>Получать уведомления о важных событиях (эскалация, оплата, просрочка)</li>
+  <li>Видеть и брать активные диалоги с клиентами</li>
+  <li>Отвечать клиенту через бота, не открывая веб</li>
+  <li>Быстрые команды для частых вопросов</li>
+</ul>
+</div>
+
+<div class="split">
+<div class="card">
+<h4>Уведомления</h4>
+<div class="tg">
+  <div class="tg-msg in">🔔 <b>Эскалация</b>
+Айгерим (новый клиент)
+Сын 1,8 · запрос: запуск речи
+Последнее: «не знаю, куда бежать 😔»
+Стадия: collecting_context</div>
+  <div class="tg-btns">
+    <button class="tg-btn primary">Взять</button>
+    <button class="tg-btn">Посмотреть</button>
+    <button class="tg-btn">Отложить на 1ч</button>
+  </div>
+</div>
+</div>
+
+<div class="card">
+<h4>Команды</h4>
+<div class="table-wrap">
+<table>
+<tr><td><code>/today</code></td><td>Сегодняшние занятия и диагностики</td></tr>
+<tr><td><code>/tomorrow</code></td><td>Завтрашние — для подтверждений</td></tr>
+<tr><td><code>/inbox</code></td><td>Список чатов, требующих ответа</td></tr>
+<tr><td><code>/escalations</code></td><td>Активные эскалации</td></tr>
+<tr><td><code>/unpaid</code></td><td>Просроченные оплаты</td></tr>
+<tr><td><code>/broadcast</code></td><td>Запустить рассылку по шаблону</td></tr>
+<tr><td><code>/client &lt;имя&gt;</code></td><td>Карточка клиента — summary</td></tr>
+<tr><td><code>/stats</code></td><td>Короткие цифры за сегодня</td></tr>
+</table>
+</div>
+</div>
+</div>
+
+<div class="card">
+<h4>Ответ клиенту из админ-бота</h4>
+<p>Когда Маша «взяла» диалог, она просто пишет текст в админ-бот — он пересылает клиенту через <em>клиентского</em> бота. Клиент видит один и тот же аккаунт, ничего не меняется. Для Маши это выглядит как обычная переписка в Telegram. Возврат боту — кнопка «Отдать боту».</p>
+<div class="tg">
+  <div class="tg-msg in">Клиент: Айгерим (взят вами 5 мин назад)</div>
+  <div class="tg-msg in">Айгерим: Мы на 10 минут опоздаем, пробки…</div>
+  <div class="tg-msg out">Хорошо, ждём, не переживайте 🌿</div>
+  <div class="tg-btns out"><button class="tg-btn">Отдать боту</button><button class="tg-btn">Шаблон</button></div>
+</div>
+</div>
+
+<!-- 13 HANDOFF -->
+<h2 id="handoff"><span class="num">13</span>Хэндофф: бот ↔ человек</h2>
+
+<div class="mermaid">
+sequenceDiagram
+  autonumber
+  participant U as Клиент (Telegram)
+  participant B as Клиентский бот
+  participant DB as БД
+  participant AB as Админ-бот
+  participant A as Админ (Маша)
+
+  U->>B: «Психиатр сказал аутизм, не знаю куда бежать 😔»
+  B->>DB: save message
+  B->>B: LLM: escalate=true, reason="эмоциональный + сложный диагноз"
+  B->>DB: dialog.mode = admin
+  B->>AB: push эскалация с карточкой
+  AB->>A: 🔔 уведомление
+  B->>U: «Я сейчас передам Марии Сергеевне, она свяжется в течение дня 🌿»
+  A->>AB: жмёт «Взять»
+  AB->>DB: taken_by_admin_id = A.id
+  U->>B: новое сообщение
+  B->>DB: save (no LLM response)
+  B->>AB: пересылка админу
+  A->>AB: пишет ответ
+  AB->>B: ответ
+  B->>U: текст от «имени бота»
+  A->>AB: «Отдать боту»
+  AB->>DB: dialog.mode = bot
+  Note over B: LLM подхватывает всё, включая реплики админа
+  B->>U: продолжает диалог
+</div>
+
+<div class="card">
+<h4>Триггеры автоматической эскалации</h4>
+<div class="grid g2">
+<ul class="clean">
+  <li>Слова-маркеры: «жалоба», «вернуть деньги», «отказаться», «куда бежать»</li>
+  <li>Эмоциональный тон (определяет LLM: confidence score)</li>
+  <li>Сложные / противоречивые диагнозы (аутизм, ДЦП, шизофрения)</li>
+  <li>Прямой запрос: «хочу поговорить с человеком»</li>
+</ul>
+<ul class="clean">
+  <li>Клиент распознан как возвращенец (матч по tg_id/phone)</li>
+  <li>LLM вернул <code>confidence &lt; 0.5</code> три раза подряд</li>
+  <li>Оплата ДИ — сумма в чеке не совпала с ожидаемой</li>
+  <li>Молчание после брони &gt;24ч</li>
+  <li>Подросток 14-16 пишет сам</li>
+</ul>
+</div>
+</div>
+
+<div class="card">
+<h4>Что происходит при mode=admin</h4>
+<ul class="nodot">
+  <li>Клиентский бот принимает сообщения клиента, но <b>не зовёт LLM</b></li>
+  <li>Все сообщения всё равно сохраняются в БД и пересылаются в админ-бот</li>
+  <li>Админ пишет ответ — он уходит через клиентского бота, клиент видит один и тот же аккаунт</li>
+  <li>Когда админ жмёт «Отдать» — мы не вызываем LLM сразу, ждём нового сообщения клиента</li>
+  <li>На следующем сообщении клиента LLM получает <em>полный</em> контекст, включая то, что писал админ</li>
+</ul>
+</div>
+
+<div class="callout ok"><strong>Ключевое свойство</strong>
+Для клиента переключение невидимо. Один бот, один аккаунт, один тон. Время ответа может меняться — это единственное, что он заметит.</div>
+
+<!-- 14 MEDIA -->
+<h2 id="media"><span class="num">14</span>Обработка медиа</h2>
+
+<div class="card">
+<div class="table-wrap">
+<table>
+<tr><th>Тип</th><th>Что делаем</th><th>Как</th><th>Зачем</th></tr>
+<tr><td>Голосовое</td><td>Транскрибируем + понимаем содержание</td><td>Gemini Flash с audio input (inline)</td><td>В чек-листе сказано исключить голосовые, но родители их шлют массово. Бот читает и продолжает диалог текстом.</td></tr>
+<tr><td>Фото ребёнка</td><td>Описание, сохранение</td><td>Gemini Vision → краткое описание</td><td>Показать специалисту перед ДИ</td></tr>
+<tr><td>Видео ребёнка</td><td>Сохранение + ключевые кадры</td><td>Gemini multimodal → описание поведения/речи</td><td>Ценнейший материал для диагностики</td></tr>
+<tr><td>Фото заключения врача</td><td>OCR + извлечение диагнозов</td><td>Gemini Vision с запросом на JSON</td><td>В анкету/анамнез ребёнка</td></tr>
+<tr><td>Чек Kaspi</td><td>OCR суммы, даты, номера</td><td>Gemini Vision</td><td>Авто-матчинг с ожидаемой оплатой</td></tr>
+<tr><td>PDF документы</td><td>Извлечение текста</td><td>Gemini с PDF input</td><td>Заключения, выписки</td></tr>
+</table>
+</div>
+</div>
+
+<div class="card">
+<h4>Хранение</h4>
+<ul class="clean">
+  <li>Не качаем файлы на диск, храним <code>telegram.file_id</code></li>
+  <li>Транскрипт/описание/OCR результат — в <code>messages.media_transcript</code></li>
+  <li>По клику в админке — ре-рендерим через Telegram file API (live preview)</li>
+  <li>Исключение: видео для ДИ — качаем на диск и храним 30 дней (потом удаляем), чтобы специалист мог спокойно смотреть</li>
+</ul>
+</div>
+
+<!-- 15 LLM -->
+<h2 id="llm"><span class="num">15</span>LLM-слой</h2>
+
+<div class="card">
+<h4>Что выбираем и когда</h4>
+<div class="table-wrap">
+<table>
+<tr><th>Модель</th><th>Где используем</th><th>Примечание</th></tr>
+<tr><td><code>gemini-2.0-flash</code></td><td>95% диалогов — квалификация, ответы, подбор слота</td><td>Бесплатный лимит, мультимодальность</td></tr>
+<tr><td><code>gemini-2.0-flash-lite</code></td><td>Классификация коротких реплик (intent), извлечение полей</td><td>Ещё дешевле, быстрее</td></tr>
+<tr><td><code>gemini-2.5-pro</code></td><td>Сложные ветви — заикание, аутизм, ЗПРР/ЗРР с противоречиями, длинные кейсы</td><td>Используем экономно, платим</td></tr>
+</table>
+</div>
+</div>
+
+<div class="card">
+<h4>Структурированный вывод — контракт</h4>
+<p>Каждый ответ LLM — JSON-объект, который роутер понимает и применяет к состоянию:</p>
+<pre><code>{
+  "reply": [
+    "Айгерим, спасибо, что написали 🌿",
+    "Подскажите, ребёнок понимает обращённую речь, когда просите что-то показать?"
+  ],
+  "extracted": {
+    "parent_name": "Айгерим",
+    "child": {
+      "age_years": 1,
+      "age_months": 8,
+      "direction_hint": "speech_launch"
+    }
+  },
+  "next_state": "collecting_context",
+  "escalate": false,
+  "escalate_reason": null,
+  "confidence": 0.92,
+  "requested_media": ["video_free_play"]
+}</code></pre>
+</div>
+
+<div class="card">
+<h4>Сборка промта — всегда одна формула</h4>
+<pre><code>SYSTEM = master_prompt (правила, тон, запреты)
+      + current_state (короткая инструкция что делать сейчас)
+      + current_branch (возрастная ветка)
+      + templates (актуальные шаблоны из БД)
+      + pricing (текущие тарифы)
+
+CONTEXT = client_card (имя, дети, история)
+        + last_N_messages (обе стороны)
+        + admin_notes (если админ что-то оставил)
+
+USER = текущее сообщение клиента
+
+OUTPUT_SCHEMA = JSON как выше</code></pre>
+</div>
+
+<div class="card">
+<h4>Защита от срывов</h4>
+<ul class="nodot">
+  <li>Жёсткие правила в system prompt — «не называть цену до квалификации», «не ставить диагнозы»</li>
+  <li>Post-processing фильтр — проверяет reply на запрещённые слова (конкретные цены не по правилам, медицинские диагнозы)</li>
+  <li>Если фильтр срабатывает — не отправляем, эскалируем</li>
+  <li>Rate limit на клиента — не больше N сообщений/минуту в обе стороны</li>
+  <li>Sentry ловит все исключения и промты с <code>confidence &lt; 0.3</code></li>
+</ul>
+</div>
+
+<!-- 16 SCHEDULER -->
+<h2 id="scheduler"><span class="num">16</span>Планировщик — что крутится в фоне</h2>
+
+<div class="card">
+<div class="table-wrap">
+<table>
+<tr><th>Задача</th><th>Когда</th><th>Действие</th></tr>
+<tr><td>Follow-up 24ч</td><td>24 часа после последнего сообщения клиента, если нет ответа</td><td>Мягкое напоминание: «Айгерим, удобно ли продолжить? 🌿»</td></tr>
+<tr><td>Follow-up 48ч</td><td>48 часов (если не ответили на первое)</td><td>«Если не получается сейчас — напишите, как будет возможно»</td></tr>
+<tr><td>Реактивация 7 дней</td><td>7 дней молчания</td><td>Помечаем <code>lost</code>, шлём финальное сообщение</td></tr>
+<tr><td>Реактивация 30 дней</td><td>Для <code>lost</code> и <code>paused</code></td><td>«Как Ваши дела? Готовы возобновить?»</td></tr>
+<tr><td>Напоминание о занятии</td><td>За 24ч до занятия в 18:00</td><td>Кнопки «Буду / Не смогу / Опоздаю»</td></tr>
+<tr><td>Напоминание о ДИ</td><td>За 24ч + за 2 часа</td><td>Подтвердить, напомнить адрес</td></tr>
+<tr><td>Напоминание об анкете</td><td>За 48ч до ДИ, если не заполнена</td><td>«Анкету не заполнили — пришлю ссылку ещё раз?»</td></tr>
+<tr><td>Генерация счетов</td><td>1 число каждого месяца, 10:00</td><td>Считает занятия, создаёт записи в <code>payments</code>, ставит <code>invoiced</code></td></tr>
+<tr><td>Напоминание об оплате</td><td>5 число 18:00; 7 число 12:00; 10 число эскалация</td><td>Шаблон + Kaspi-ссылка</td></tr>
+<tr><td>ДР ребёнка</td><td>Утром в день рождения</td><td>Шаблон поздравления Маши</td></tr>
+<tr><td>Сезонные</td><td>8 марта, Наурыз, 1 сент, Новый год</td><td>Ручное одобрение в админке, потом рассылка</td></tr>
+<tr><td>Чистка медиа</td><td>Ежедневно, 3:00</td><td>Удалить скачанные видео старше 30 дней</td></tr>
+<tr><td>Бэкап БД</td><td>Ежедневно, 4:00</td><td>SQLite dump → S3 / Google Drive</td></tr>
+</table>
+</div>
+</div>
+
+<!-- 17 INTEGRATIONS -->
+<h2 id="integrations"><span class="num">17</span>Интеграции</h2>
+
+<div class="grid g2">
+<div class="card">
+<h4>MVP</h4>
+<ul class="nodot">
+  <li><b>Telegram Bot API</b> — webhook, medias, inline keyboards</li>
+  <li><b>Gemini API</b> — google-generativeai SDK</li>
+  <li><b>Kaspi</b> — один общий pay-link, приём чеков фото, OCR суммы</li>
+  <li><b>Sentry</b> — отлов ошибок</li>
+</ul>
+</div>
+<div class="card">
+<h4>Фаза 2</h4>
+<ul class="nodot">
+  <li><b>Google Calendar</b> — двусторонняя синхронизация расписания специалистов</li>
+  <li><b>Google Sheets</b> — экспорт «ДЕТИ ДАТЫ» для совместимости с текущими таблицами Маши</li>
+  <li><b>Kaspi Business API</b> — если появится доступ, авто-трекинг входящих платежей</li>
+</ul>
+</div>
+<div class="card">
+<h4>Фаза 3</h4>
+<ul class="nodot">
+  <li><b>WhatsApp</b> — через Green API или Meta Business Platform, если решим удержать существующий канал</li>
+  <li><b>Instagram DM</b> — Meta Business API, приём первого сообщения с переадресацией</li>
+  <li><b>2ГИС</b> — deeplink «написать в Telegram» в профиле</li>
+</ul>
+</div>
+<div class="card">
+<h4>Не делаем пока</h4>
+<ul class="nodot">
+  <li><b>1С / полноценная CRM</b> — только если центр начнёт быстро расти</li>
+  <li><b>Свои платежи (эквайринг)</b> — Каспи покрывает</li>
+  <li><b>Мобильное приложение</b> — Telegram Mini App покрывает</li>
+</ul>
+</div>
+</div>
+
+<!-- 18 SECURITY -->
+<h2 id="security"><span class="num">18</span>Безопасность и роли</h2>
+
+<div class="card">
+<h4>Данные</h4>
+<ul class="nodot">
+  <li>Все персональные данные родителей и детей — только в нашей БД</li>
+  <li>Webhook Telegram — HTTPS only, secret token в заголовке</li>
+  <li>API-ключи (Gemini, Sentry, Railway) — в <code>.env</code>, не в git</li>
+  <li>БД шифруется на уровне провайдера (Railway Postgres)</li>
+  <li>SQLite на старте — файл в персистентном volume Railway, бэкап ежедневно</li>
+  <li>Медиа от клиентов — <code>file_id</code> в БД, сами файлы живут в Telegram CDN</li>
+</ul>
+</div>
+
+<div class="card">
+<h4>Роли</h4>
+<div class="table-wrap">
+<table>
+<tr><th>Роль</th><th>Кто</th><th>Что может</th></tr>
+<tr><td><code>owner</code></td><td>Мария Сергеевна</td><td>Всё. Настройки, прайс, роли, рассылки, аналитика.</td></tr>
+<tr><td><code>admin</code></td><td>Агния и другие админы</td><td>Inbox, клиенты, расписание, оплаты. Рассылки — с одобрения owner.</td></tr>
+<tr><td><code>specialist</code></td><td>Педагоги</td><td>Только свои клиенты и только просмотр + комментарии.</td></tr>
+<tr><td><code>methodist</code></td><td>Маргарита Наильевна</td><td>Клиенты, анкеты, отчёты. Без финансов.</td></tr>
+</table>
+</div>
+</div>
+
+<div class="card">
+<h4>Аудит</h4>
+<ul class="nodot">
+  <li>Каждое действие админа — запись в <code>audit_log</code></li>
+  <li>Кто взял диалог, кто отправил рассылку, кто поменял прайс — видно</li>
+  <li>Админка показывает «Изменено: Агния · 2 часа назад» на всех редактируемых полях</li>
+  <li>LLM-ответы логируются полностью (для анализа качества)</li>
+</ul>
+</div>
+
+<div class="callout bad"><strong>Чего боимся</strong>
+Утечка чатов (ПД родителей и детей). Защита: приватная БД, закрытый доступ, SSO через Telegram, регулярные бэкапы на внешнее хранилище с шифрованием. Никаких клиентских данных в публичном git или публичных отчётах.</div>
+
+<!-- 19 DEPLOY -->
+<h2 id="deploy"><span class="num">19</span>Деплой</h2>
+
+<div class="card">
+<h4>Railway — один контейнер, четыре процесса</h4>
+<pre><code># Procfile
+web: uvicorn app.web.main:app --host 0.0.0.0 --port $PORT
+bot: python -m app.bot.main
+admin_bot: python -m app.admin_bot.main
+scheduler: python -m app.scheduler.main</code></pre>
+<ul class="clean">
+  <li>Railway хостит все процессы в одном контейнере через <code>honcho</code></li>
+  <li>Webhook Telegram смотрит на <code>&lt;app&gt;.railway.app/webhook/&lt;secret&gt;</code></li>
+  <li>Persistent volume 1 GB для SQLite + временных медиа</li>
+  <li>Бэкап БД ежедневно в Google Drive (одноразовая настройка)</li>
+</ul>
+</div>
+
+<div class="card">
+<h4>Окружения</h4>
+<div class="table-wrap">
+<table>
+<tr><th>Env</th><th>Где</th><th>Что</th></tr>
+<tr><td><code>local</code></td><td>Мой ПК</td><td>SQLite + long polling, без медиа-обработки</td></tr>
+<tr><td><code>staging</code></td><td>Railway preview</td><td>Отдельный бот-токен, отдельная БД, проверка перед релизом</td></tr>
+<tr><td><code>production</code></td><td>Railway main</td><td>Основной бот, основная админка, бэкапы</td></tr>
+</table>
+</div>
+</div>
+
+<div class="card">
+<h4>CI / CD</h4>
+<pre><code># .github/workflows/deploy.yml
+on:
+  push:
+    branches: [main]
+jobs:
+  test:
+    - ruff check
+    - pytest
+  deploy:
+    needs: test
+    - railway up --service anceva-bot</code></pre>
+<p style="color:var(--ink-2);font-size:13.5px">Push в main → тесты → авто-деплой. В staging — push в branch <code>staging</code>. Откат — одна команда <code>railway rollback</code>.</p>
+</div>
+
+<!-- 20 PHASES -->
+<h2 id="phases"><span class="num">20</span>Этапы работ</h2>
+
+<div class="grid g2">
+<div class="card"><h3 style="margin-top:0">Фаза 0 · Подготовка · готово</h3>
+<ul class="clean">
+  <li>✅ Анализ чатов и чек-листа</li>
+  <li>✅ ANALYSIS.html для Маши</li>
+  <li>✅ Этот документ — TECH.html</li>
+  <li>→ Согласовать объём MVP</li>
+  <li>→ Получить токены: Bot, Gemini, Sentry</li>
+</ul>
+</div>
+
+<div class="card"><h3 style="margin-top:0">Фаза 1 · MVP бот · 2–3 нед</h3>
+<ul class="clean">
+  <li>Проект skeleton, БД SQLite, миграции</li>
+  <li>Клиентский бот: приём, квалификация по дереву</li>
+  <li>LLM-слой: мастер-промт, structured output</li>
+  <li>Мультимодальность: голос + фото + видео</li>
+  <li>Хэндофф бот↔админ через админ-бот</li>
+  <li>Kaspi-ссылка, приём чека (без OCR)</li>
+  <li>Базовый scheduler: follow-up + напоминание</li>
+  <li>Развёртывание на Railway</li>
+</ul>
+</div>
+
+<div class="card"><h3 style="margin-top:0">Фаза 2 · Админка · 1–2 нед</h3>
+<ul class="clean">
+  <li>FastAPI + htmx skeleton</li>
+  <li>Auth через Telegram Login</li>
+  <li>Inbox, экран чата, карточка клиента</li>
+  <li>Расписание (простой календарь)</li>
+  <li>Оплаты (генерация + отправка)</li>
+  <li>Шаблоны (редактор)</li>
+  <li>Рассылки</li>
+</ul>
+</div>
+
+<div class="card"><h3 style="margin-top:0">Фаза 3 · Операционка · 1–2 нед</h3>
+<ul class="clean">
+  <li>Миграция на Postgres</li>
+  <li>Google Calendar sync</li>
+  <li>OCR чеков Kaspi, авто-матчинг</li>
+  <li>Сезонные триггеры и автопоздравления</li>
+  <li>Реактивация спящих</li>
+  <li>Экспорт в Google Sheets (совместимость)</li>
+</ul>
+</div>
+
+<div class="card"><h3 style="margin-top:0">Фаза 4 · Аналитика и рост</h3>
+<ul class="clean">
+  <li>Дашборд KPI</li>
+  <li>Реферальная программа в боте</li>
+  <li>A/B шаблонов</li>
+  <li>Авто-аналитика диалогов (темы, тон, отказы)</li>
+  <li>Интеграция Instagram / WhatsApp при необходимости</li>
+</ul>
+</div>
+
+<div class="card"><h3 style="margin-top:0">Фаза 5 · Опционально</h3>
+<ul class="clean">
+  <li>Полноценный Telegram Mini App (анкета → кабинет родителя)</li>
+  <li>Экспорт отчётов для педагогов</li>
+  <li>Автогенерация характеристик (черновик по занятиям)</li>
+  <li>Персональные pay-link (уникальные на каждую оплату)</li>
+</ul>
+</div>
+</div>
+
+<!-- 21 RISKS -->
+<h2 id="risks"><span class="num">21</span>Риски и открытые вопросы</h2>
+
+<div class="card">
+<h4>Технические риски</h4>
+<ul class="nodot">
+  <li><b>Лимиты Gemini Flash на free tier</b> — 15 RPM, 1M TPM, 1500 RPD. При росте входящего потока можем упереться. Митигация: кэш повторяющихся шаблонных ответов, downgrade на flash-lite для классификации.</li>
+  <li><b>Telegram rate limits</b> — 30 msg/s в целом, 1 msg/s на одного пользователя. Для активных рассылок 200+ клиентов — батчинг.</li>
+  <li><b>Сбои webhook</b> — если контейнер уснёт, Telegram будет копить апдейты. Railway в этом плане надёжен, Render — нет.</li>
+  <li><b>LLM-сбои</b> — если Gemini упал, падаем в fallback «простите, вас передадим специалисту» + авто-эскалация.</li>
+</ul>
+</div>
+
+<div class="card">
+<h4>Продуктовые риски</h4>
+<ul class="nodot">
+  <li><b>Клиент сейчас в WhatsApp, не в Telegram.</b> Если строим только TG — нужен переход. Либо интеграция WhatsApp через Green API (~$30/мес, работает через QR и ваш номер). <b>Это главный вопрос к тебе и Маше.</b></li>
+  <li><b>Маша может выключить бота.</b> Любое неаккуратное сообщение родителю — и доверие утекает. Защита: все первые 20 диалогов — в <em>shadow mode</em>, бот пишет черновик, админ одобряет.</li>
+  <li><b>Перерасчёты и финансы — зона тонкая.</b> Если бот ошибётся в сумме — конфликт. На MVP все оплаты формируются, но <b>отправка — только после одобрения админом</b>.</li>
+</ul>
+</div>
+
+<div class="card">
+<h4>Открытые вопросы</h4>
+<ul class="nodot">
+  <li>WhatsApp в MVP — да или нет?</li>
+  <li>Анкета — Telegram Mini App или отдельная веб-форма на поддомене?</li>
+  <li>Telegram-бот один или всё-таки два (клиентский + админский) — я за два, но это +1 токен и мелкие затраты на инфру</li>
+  <li>Hosting: Railway ($5) или self-host на VPS ($5) — зависит от того, есть ли у тебя VPS уже</li>
+  <li>Доменное имя — использовать поддомен бренда или отдельное?</li>
+  <li>Правовая часть — согласие на обработку ПД должно быть оформлено в TG Mini App или отдельно</li>
+  <li>Первичный импорт — выгрузка существующих клиентов из текущих чатов / таблиц в базу</li>
+</ul>
+</div>
+
+<hr>
+
+<footer>
+  Technical Design v0.1 · Anceva Bot · сопровождающий документ к ANALYSIS.html<br>
+  Последнее обновление: <span id="date"></span>
+</footer>
+
+</main>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad:true,theme:'base',securityLevel:'loose',
+    flowchart:{useMaxWidth:true,htmlLabels:true},
+    themeVariables:{
+      fontFamily:'inherit',
+      primaryColor:'#eef0ff',
+      primaryTextColor:'#1b1f24',
+      primaryBorderColor:'#3a52d6',
+      lineColor:'#3a52d6',
+      secondaryColor:'#fff',
+      tertiaryColor:'#f6f8fb'
+    }
+  });
+  document.getElementById('date').textContent = new Date().toISOString().slice(0,10);
+
+  // Обёртки таблиц
+  document.querySelectorAll('table').forEach(t=>{
+    if(t.parentElement && t.parentElement.classList.contains('table-wrap'))return;
+    const w=document.createElement('div');w.className='table-wrap';
+    t.parentNode.insertBefore(w,t);w.appendChild(t);
+  });
+
+  // Бургер
+  const burger=document.getElementById('burger');
+  const drawer=document.getElementById('drawer');
+  const backdrop=document.getElementById('backdrop');
+  function closeDrawer(){document.body.classList.remove('drawer-open')}
+  burger.addEventListener('click',()=>document.body.classList.toggle('drawer-open'));
+  backdrop.addEventListener('click',closeDrawer);
+  drawer.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeDrawer));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
+
+  // Активный раздел при скролле
+  const sections=[...document.querySelectorAll('h2[id]')];
+  const links=[...document.querySelectorAll('.toc-desktop a'),...document.querySelectorAll('.drawer a')];
+  const activate=id=>links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+id));
+  new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)activate(e.target.id)}),
+    {rootMargin:'-20% 0px -70% 0px'}).observe && sections.forEach(s=>{
+    const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)activate(e.target.id)}),
+      {rootMargin:'-20% 0px -70% 0px'});
+    obs.observe(s);
+  });
+</script>
+</body>
+</html>
