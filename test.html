@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Тестируем бот · инструкция · Центр Коррекции Речи Анцевой</title>
+<style>
+  :root{
+    --bg:#faf8f4;
+    --surface:#ffffff;
+    --ink:#1f2328;
+    --ink-2:#4a5560;
+    --muted:#7d8691;
+    --line:#e7e2d8;
+    --accent:#b6895b;
+    --accent-2:#8a6b45;
+    --ok:#4a8b5f;
+    --warn:#c27a3b;
+    --bad:#b5423c;
+    --brand:#d4a574;
+    --brand-soft:#f5ede0;
+    --tint:#f8f3ea;
+    --tint-2:#fbf7ef;
+  }
+  *{box-sizing:border-box;min-width:0}
+  html,body{margin:0;padding:0;overflow-x:hidden;max-width:100%}
+  body{
+    background:var(--bg);color:var(--ink);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,"Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    word-wrap:break-word;overflow-wrap:break-word;
+  }
+  a{color:var(--accent-2)}
+  ::selection{background:#f2dcb3}
+
+  .wrap{max-width:880px;margin:0 auto;padding:44px 28px 120px}
+  @media (max-width:640px){.wrap{padding:18px 14px 80px}}
+
+  /* HERO */
+  header.hero{
+    background:linear-gradient(135deg,#f6ecd9 0%,#efe2c8 100%);
+    border-radius:24px;padding:48px 44px;margin-bottom:36px;
+    border:1px solid var(--line);
+  }
+  @media (max-width:860px){header.hero{padding:32px 22px;border-radius:18px;margin-bottom:24px}}
+  @media (max-width:480px){header.hero{padding:26px 18px;border-radius:14px}}
+  .kicker{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-2);font-weight:700;margin-bottom:16px}
+  header.hero h1{font-size:clamp(26px,4.8vw,42px);line-height:1.15;margin:0 0 16px;font-weight:700;letter-spacing:-.01em}
+  header.hero .lead{font-size:clamp(15px,2vw,18px);line-height:1.55;color:var(--ink-2);max-width:720px;margin:0 0 12px}
+  header.hero .meta{display:flex;gap:12px 22px;flex-wrap:wrap;margin-top:18px;font-size:13px;color:var(--ink-2)}
+  header.hero .meta span::before{content:"◇  ";color:var(--accent)}
+
+  /* TYPOGRAPHY */
+  h2{font-size:clamp(22px,3.4vw,28px);margin:48px 0 6px;font-weight:700;letter-spacing:-.01em;scroll-margin-top:80px}
+  h2 .num{display:inline-block;font-size:12px;letter-spacing:.22em;color:var(--accent-2);vertical-align:middle;
+    margin-right:12px;font-weight:700;border:1px solid var(--accent);border-radius:999px;padding:4px 10px}
+  h3{font-size:18px;margin:24px 0 8px;font-weight:600}
+  p{margin:0 0 14px}
+  .sub{color:var(--ink-2);margin:-2px 0 20px;font-size:16px;max-width:720px}
+
+  /* CARDS */
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0;max-width:100%}
+  .card.tint{background:var(--tint)}
+  .card.soft{background:var(--brand-soft);border-color:#e5d4b2}
+  @media (max-width:640px){.card{padding:18px 16px;border-radius:12px}}
+
+  /* BOT BADGE */
+  .bot-row{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:18px 0 8px}
+  @media (max-width:600px){.bot-row{grid-template-columns:1fr}}
+  .bot{display:block;background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;text-decoration:none;color:inherit;transition:transform .15s ease,box-shadow .2s}
+  .bot:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(31,35,40,.07);border-color:var(--accent)}
+  .bot .role{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-2);font-weight:700;margin-bottom:8px}
+  .bot .at{font-size:18px;font-weight:600;color:var(--ink);margin-bottom:6px}
+  .bot .desc{font-size:14px;color:var(--ink-2);line-height:1.45}
+
+  /* CHAT BUBBLES */
+  .chat{background:var(--tint-2);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:10px 0}
+  .chat .title{font-size:12.5px;color:var(--accent-2);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+  .msg{margin:6px 0;font-size:14.5px;line-height:1.5;display:flex;gap:8px}
+  .msg .who{color:var(--muted);font-size:12px;min-width:78px;flex-shrink:0;padding-top:2px}
+  .msg.p .bubble{background:#fff;border:1px solid var(--line);padding:8px 12px;border-radius:12px 12px 12px 4px;max-width:100%}
+  .msg.c .bubble{background:var(--brand-soft);border:1px solid #e5d4b2;padding:8px 12px;border-radius:12px 12px 4px 12px;max-width:100%}
+  .msg.s .bubble{background:#eef2ee;border:1px dashed #c7d3c8;padding:8px 12px;border-radius:12px;color:var(--ink-2);font-size:13.5px;font-style:italic}
+
+  /* STEPS */
+  ol.steps{list-style:none;counter-reset:s;padding:0;margin:14px 0}
+  ol.steps li{counter-increment:s;padding:12px 14px 12px 56px;position:relative;background:#fff;border:1px solid var(--line);border-radius:12px;margin:8px 0;font-size:15px;line-height:1.55}
+  ol.steps li::before{content:counter(s);position:absolute;left:14px;top:14px;width:28px;height:28px;border-radius:50%;background:var(--accent-2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+  ol.steps li b{color:var(--ink)}
+
+  /* CHECKLIST / CROSSLIST */
+  ul.check, ul.cross{list-style:none;padding-left:0;margin:8px 0 14px}
+  ul.check li, ul.cross li{padding-left:28px;position:relative;margin:7px 0;line-height:1.5}
+  ul.check li::before{content:"✓";position:absolute;left:4px;color:var(--ok);font-weight:700;font-size:16px}
+  ul.cross li::before{content:"×";position:absolute;left:6px;color:var(--bad);font-weight:700;font-size:18px}
+
+  /* TAGS */
+  .tag{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;
+       background:var(--brand-soft);color:var(--accent-2);border:1px solid #e5d4b2;margin:2px 4px 2px 0;white-space:nowrap}
+  .tag.ok{background:#e7f2ea;color:var(--ok);border-color:#bcdcc4}
+  .tag.warn{background:#fbeedc;color:var(--warn);border-color:#eed0a9}
+  .tag.bad{background:#f8dedc;color:var(--bad);border-color:#edbab7}
+
+  /* CALLOUT */
+  .callout{border-left:4px solid var(--warn);background:#fdf5e9;padding:14px 18px;border-radius:0 12px 12px 0;margin:14px 0;font-size:15px;line-height:1.55}
+  .callout.ok{border-color:var(--ok);background:#eef7f0}
+  .callout.insight{border-color:var(--accent);background:var(--brand-soft)}
+  .callout strong{display:block;margin-bottom:4px;color:var(--ink);font-size:14.5px}
+
+  /* BUTTON-LIKE LINK */
+  .btn{display:inline-block;background:var(--accent-2);color:#fff;text-decoration:none;padding:10px 18px;border-radius:10px;font-weight:600;font-size:14.5px;margin:6px 0}
+  .btn:hover{background:var(--ink-2)}
+
+  /* FOOTER */
+  footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted)}
+  footer a{color:var(--ink-2)}
+
+  code{background:var(--tint);padding:2px 6px;border-radius:5px;font-size:13.5px;font-family:ui-monospace,Menlo,Consolas,monospace}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="kicker">Тестовая среда · апрель 2026</div>
+  <h1>Тестируем бот — простая инструкция</h1>
+  <p class="lead">Что попробовать, на что смотреть, что уже работает и что мы пока ещё доделываем. Ничего не сломаешь — это отдельная тестовая среда, без реальных клиентов.</p>
+  <div class="meta">
+    <span>Версия 0.1 · MVP</span>
+    <span>2 бота в Telegram</span>
+    <span>Развёрнуто в облаке Railway</span>
+  </div>
+</header>
+
+<!-- ============================================================ -->
+<h2><span class="num">01</span>Что это вообще</h2>
+<p class="sub">В двух словах — что мы тут построили и зачем.</p>
+
+<div class="card">
+  <p><b>Это Telegram-бот для первичной консультации родителей.</b> Когда мама пишет в Instagram «нам бы к вам на диагностику», вместо того чтобы каждый раз отвечать вручную, на её сообщения отвечает помощник на основе искусственного интеллекта. Он работает по тому же сценарию, что и Вы, по тому же чек-листу, в Вашем стиле — с эмодзи, ласкательно, заботливо.</p>
+
+  <p>Бот не просто «отвечает текстом» — он:</p>
+  <ul class="check">
+    <li>задаёт уточняющие вопросы (возраст ребёнка, садик, тревоги, видео);</li>
+    <li>понимает фото, голосовые и видео — мама может прислать заключение врача или голосовое описание ситуации;</li>
+    <li>двигается по дереву диалога: возраст → ситуация → направление → диагностика → запись;</li>
+    <li>сам понимает, когда нужен живой человек, и зовёт администратора.</li>
+  </ul>
+
+  <p>Когда бот не справляется или ситуация деликатная — он передаёт диалог Вам или Агние. Вы видите всю историю, сами отвечаете маме через бот, а потом возвращаете диалог обратно ИИ — он продолжит с того места.</p>
+</div>
+
+<div class="callout insight">
+  <strong>Главное правило теста</strong>
+  Это не финальная версия. Часть фич — работает (диалог, понимание медиа, передача админу), часть — пока заглушки (запись на ДИ, оплата). Подробности ниже в разделе «Что пока не работает».
+</div>
+
+<!-- ============================================================ -->
+<h2><span class="num">02</span>Где боты</h2>
+<p class="sub">Два разных бота — для двух разных людей.</p>
+
+<div class="bot-row">
+  <a class="bot" href="https://t.me/anceva_center_bot" target="_blank">
+    <div class="role">Клиентский бот · для родителей</div>
+    <div class="at">@anceva_center_bot</div>
+    <div class="desc">Сюда пишут мамы. Отвечает помощник. Это то, что увидит клиент центра.</div>
+  </a>
+  <a class="bot" href="https://t.me/anceva_admin_bot" target="_blank">
+    <div class="role">Админ-бот · для Вас и Агнии</div>
+    <div class="at">@anceva_admin_bot</div>
+    <div class="desc">Сюда падают уведомления и кнопки. Отсюда Вы сами можете писать клиенту.</div>
+  </a>
+</div>
+
+<div class="callout">
+  <strong>Чтобы попробовать админ-бота — нужен доступ</strong>
+  Сейчас админ-бот привязан к Telegram-аккаунту Романа. Если хотите попробовать сами — пришлите Роману свой Telegram user_id (узнать просто: напишите боту <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a>, он пришлёт цифры). Роман добавит Вас как владельца, и админ-бот будет работать у Вас в Telegram.
+</div>
+
+<!-- ============================================================ -->
+<h2><span class="num">03</span>Как протестировать клиентского бота</h2>
+<p class="sub">Это самая интересная часть — попробуйте разные сценарии и посмотрите, как бот ведёт диалог.</p>
+
+<ol class="steps">
+  <li>Откройте в Telegram <a href="https://t.me/anceva_center_bot" target="_blank"><b>@anceva_center_bot</b></a></li>
+  <li>Нажмите <b>«Запустить»</b> или отправьте команду <code>/start</code></li>
+  <li>Бот поприветствует и спросит — родитель Вы или подросток. Выберите вариант.</li>
+  <li>Напишите обычное сообщение от лица мамы — например: <i>«Сыну 4 года, плохо говорит, не знаю что делать»</i></li>
+  <li>Бот начнёт задавать уточняющие вопросы. Отвечайте ему как обычной маме — он подстроится.</li>
+</ol>
+
+<h3>Что попробовать обязательно</h3>
+<ul class="check">
+  <li><b>Текст.</b> «Дочке 5, идём в школу в сентябре, нужна готовность» — бот должен направить на ПШ.</li>
+  <li><b>Голосовое.</b> Запишите голосовое сообщение — бот его расшифрует и продолжит диалог.</li>
+  <li><b>Фото ребёнка.</b> Пришлите фото с подписью «играет дома» — бот опишет, что видит.</li>
+  <li><b>Фото чека Каспи.</b> Пришлите фото с подписью «оплатила» — бот распознает что это чек.</li>
+  <li><b>Фото заключения.</b> Пришлите скриншот заключения с подписью «от невропатолога» — бот воспримет как мед-документ.</li>
+  <li><b>Видео.</b> Короткое видео ребёнка — бот опишет.</li>
+  <li><b>Когда бот спросит цену.</b> Бот не должен называть цены до квалификации — посмотрите, как он уходит от прямого ответа.</li>
+  <li><b>Запросить адрес.</b> Спросите «где вы находитесь» — бот должен ответить ориентиром («центр города, пересечение Ермекова и Ерубаева»), не точным адресом.</li>
+</ul>
+
+<div class="chat">
+  <div class="title">Пример живого диалога с ботом</div>
+  <div class="msg p"><span class="who"><b>Мама</b></span><span class="bubble">Здравствуйте, нам бы к Вам на диагностику</span></div>
+  <div class="msg c"><span class="who"><b>Бот</b></span><span class="bubble">Здравствуйте! 🌷 Спасибо, что обратились. Расскажите, пожалуйста, сколько ребёночку лет?</span></div>
+  <div class="msg p"><span class="who"><b>Мама</b></span><span class="bubble">4 года</span></div>
+  <div class="msg c"><span class="who"><b>Бот</b></span><span class="bubble">Понимаю 🌿 Подскажите, как зовут малыша и что Вас тревожит — мало слов, не выговаривает звуки, что-то ещё?</span></div>
+</div>
+
+<!-- ============================================================ -->
+<h2><span class="num">04</span>Что бот умеет — и чего пока нет</h2>
+
+<div class="card">
+  <h3>Уже работает</h3>
+  <ul class="check">
+    <li>Диалог в Вашем стиле, с эмодзи, ласкательно, по чек-листу</li>
+    <li>Дерево разговора: возраст → ситуация → направление → диагностика</li>
+    <li>Распознавание голосовых сообщений (русский язык)</li>
+    <li>Понимание фото — ребёнок / чек оплаты / заключение врача</li>
+    <li>Описание коротких видео</li>
+    <li>Прайс из Вашего листа «Оплата и правила» — бот знает все цифры</li>
+    <li>Передача диалога живому администратору, когда нужно</li>
+    <li>Возврат диалога боту с сохранением всего контекста</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Пока не работает / в разработке</h3>
+  <ul class="cross">
+    <li><b>Запись на конкретный слот ДИ.</b> Бот может сказать «давайте запишемся на четверг», но реальной интеграции с Вашим календарём ещё нет.</li>
+    <li><b>Оплата по Каспи.</b> Бот умеет показать ссылку, но автоматически не сверяет факт оплаты.</li>
+    <li><b>Анкета (Mini App).</b> Заглушка — форма открывается, но данные пока не сохраняются.</li>
+    <li><b>Веб-админка с историей клиентов.</b> Сделан каркас, но реальных экранов пока нет.</li>
+    <li><b>Напоминания и follow-up.</b> Каркас есть, реальные напоминания пока не отправляются.</li>
+    <li><b>Месячные счета.</b> Заложено, но не активировано.</li>
+  </ul>
+</div>
+
+<div class="callout">
+  <strong>Что это значит на практике</strong>
+  Если бот скажет: «Записал Вас на четверг 14:00» — это пока «понарошку». В реальной версии будет реальная запись. Сейчас цель теста — проверить, что бот <b>умеет вести разговор</b> и <b>понимает мам</b>, а не что бронь действительно создаётся.
+</div>
+
+<!-- ============================================================ -->
+<h2><span class="num">05</span>Как работает админ-бот</h2>
+<p class="sub">Эта часть для Вас — то, что Вы будете видеть как администратор центра.</p>
+
+<h3>Откуда берутся уведомления</h3>
+<p>Когда бот понимает, что нужен живой человек (например, родитель просит личного звонка, расстроен, или вопрос вне сценария) — он эскалирует диалог. В админ-боте появляется такое сообщение:</p>
+
+<div class="chat">
+  <div class="title">Пример уведомления в админ-боте</div>
+  <div class="msg s"><span class="who"><b>Бот</b></span><span class="bubble">🔔 Эскалация<br>
+    Клиент: Айгерим<br>
+    Ребёнок: 4 лет, дефектолог<br>
+    Причина: <code>request_human</code><br>
+    <i>Последнее сообщение:</i><br>
+    «Хочу поговорить с живым человеком, очень переживаю»</span></div>
+  <div class="msg s"><span class="who"></span><span class="bubble">[ Взять ]   [ Посмотреть ]</span></div>
+</div>
+
+<h3>Кнопки</h3>
+<ul class="check">
+  <li><b>Взять</b> — Вы становитесь ответственной за диалог. Помощник замолкает. Клиенту приходит сообщение: «Сейчас Вам ответит наш администратор 🌿».</li>
+  <li><b>Посмотреть</b> — открыть последние сообщения, не забирая диалог.</li>
+</ul>
+
+<h3>Как переписываться с клиентом через админ-бота</h3>
+<ol class="steps">
+  <li>Нажали «Взять» — увидели последние сообщения и кнопку <b>Отдать боту</b>.</li>
+  <li>Любой текст, который Вы пишете в чат админ-бота, <b>уходит клиенту</b> от имени клиентского бота. Клиент не догадается, что переключился на живого человека — для него это всё тот же чат.</li>
+  <li>Когда клиент пишет в это время — его сообщение приходит Вам в админ-бот с пометкой <code>💬 #номер_диалога</code>.</li>
+  <li>Закончили — нажали <b>Отдать боту</b>. Клиент получает: «Я снова на связи — пишите, продолжим». Помощник возобновляет работу с накопленным контекстом, включая Ваши реплики.</li>
+</ol>
+
+<div class="callout ok">
+  <strong>Почему это удобно</strong>
+  Вы не теряете контекст — бот всё помнит, включая то, что Вы написали клиенту лично. Когда отдаёте обратно — он не «забывает» и не задаёт повторно те же вопросы.
+</div>
+
+<!-- ============================================================ -->
+<h2><span class="num">06</span>Полный сценарий теста</h2>
+<p class="sub">Если хотите пройти всё от начала до конца — вот пошагово.</p>
+
+<h3>Сценарий 1 — обычная консультация</h3>
+<ol class="steps">
+  <li>Откройте <a href="https://t.me/anceva_center_bot" target="_blank">@anceva_center_bot</a>, нажмите <code>/start</code></li>
+  <li>Выберите «я родитель»</li>
+  <li>Напишите: «Сыну 5 лет, готовимся в школу, есть тревога что не справится»</li>
+  <li>Отвечайте на вопросы бота. Попробуйте прислать фото или голосовое.</li>
+  <li>Дойдите до момента, когда бот предложит запись на ДИ ПШ-готовности.</li>
+</ol>
+
+<h3>Сценарий 2 — эскалация на живого человека</h3>
+<ol class="steps">
+  <li>В диалоге напишите что-то требующее живого ответа: «Хочу поговорить с самой Марией Сергеевной, есть личный вопрос»</li>
+  <li>Бот должен эскалировать — в админ-боте появится уведомление</li>
+  <li>Жмите <b>Взять</b> в админ-боте</li>
+  <li>В админ-боте увидите историю + кнопку <b>Отдать боту</b></li>
+  <li>Напишите в админ-чат «Здравствуйте, я Мария Сергеевна, слушаю» — это уйдёт клиенту</li>
+  <li>Из клиентского чата напишите ответ — он придёт Вам в админ-бот</li>
+  <li>В админ-боте жмите <b>Отдать боту</b> — клиент получит «снова на связи», помощник продолжит</li>
+</ol>
+
+<h3>Сценарий 3 — медиа</h3>
+<ol class="steps">
+  <li>Запишите голосовое: «Не знаю как связно объяснить ситуацию, надеюсь Вы меня поймёте...» 30 секунд</li>
+  <li>Бот расшифрует и ответит по содержанию голосового</li>
+  <li>Пришлите фото — любое, ребёнка или просто кота — с подписью «он у нас такой»</li>
+  <li>Бот опишет, что видит, и продолжит разговор</li>
+</ol>
+
+<!-- ============================================================ -->
+<h2><span class="num">07</span>Что делать, если что-то странное</h2>
+
+<div class="card">
+  <ul class="check">
+    <li><b>Бот молчит дольше минуты</b> — попробуйте ещё раз. Если не помогает — напишите Роману.</li>
+    <li><b>Бот ответил странно или не в тему</b> — это очень важная информация! Сделайте скриншот и пришлите Роману. Мы дотюним помощника на таких примерах.</li>
+    <li><b>Бот назвал точную цену до квалификации</b> — баг, нужен скриншот.</li>
+    <li><b>Бот выдал точный адрес до брони</b> — баг, нужен скриншот.</li>
+    <li><b>Бот пообещал результат лечения</b> («ребёнок точно заговорит через месяц») — баг, нужен скриншот.</li>
+    <li><b>Хотите начать диалог с нуля</b> — отправьте <code>/start</code>. Старый диалог сбросится.</li>
+  </ul>
+</div>
+
+<div class="callout">
+  <strong>Ничего не сломаете</strong>
+  Это <b>отдельная тестовая среда</b>. Никаких реальных клиентов, никаких реальных оплат, никаких реальных записей. Все разговоры пишутся в специальную базу — Роман потом разбирает их и дотюнивает помощника.
+</div>
+
+<!-- ============================================================ -->
+<h2><span class="num">08</span>Что мы хотим узнать из теста</h2>
+<p class="sub">Главное — Ваше ощущение «звучит как наш центр или нет».</p>
+
+<div class="card">
+  <ul class="check">
+    <li>Звучит ли бот <b>как Ваш центр</b> — стиль, эмодзи, тёплость? Или сухо/казённо/«как банк»?</li>
+    <li>Угадывает ли он <b>Ваши вопросы</b> — то, о чём Вы реально спрашиваете маму на первой встрече?</li>
+    <li>Правильно ли отрабатывает <b>дерево по возрасту</b> — для 2-летки, 4-летки, 6-летки?</li>
+    <li>Не <b>ляпает</b> ли что-то лишнее — точные цены, адрес, обещания, диагнозы?</li>
+    <li>Удобно ли <b>забирать</b> диалог из админ-бота? Понятно ли, что происходит?</li>
+    <li>Что бы <b>добавили</b> Вы лично в сценарий — какой вопрос/нюанс мы упустили?</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2><span class="num">09</span>Связь и обратная связь</h2>
+
+<div class="card">
+  <p><b>Разработчик:</b> Роман</p>
+  <p>Email: <a href="mailto:mr.romanzhan@gmail.com">mr.romanzhan@gmail.com</a></p>
+  <p>Telegram: пишите тут же, в любом из ботов — Роман видит логи.</p>
+  <p>Удобнее всего — <b>скриншоты</b> со странными ответами, особенно если можете подсказать, что бы Вы написали в этом случае сами.</p>
+</div>
+
+<footer>
+  Эта инструкция · версия 1, апрель 2026 · <a href="index.html">← Анализ переписки</a> · <a href="tech.html">Технический проект →</a>
+</footer>
+
+</div>
+</body>
+</html>
